@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Menus {
+  id  Int @id @default(autoincrement())
+  name  String
+  price Int?  @default(0)
+  isAvailable Boolean? @default(true)
+  menuCategoriesMenus MenuCategoriesMenus[]
+}
+
+model MenuCategories {
+  id  Int @id @default(autoincrement())
+  name  String
+  menuCategoriesMenus MenuCategoriesMenus[]
+}
+
+model MenuCategoriesMenus {
+  id Int @id @default(autoincrement())
+  menuId Int
+  menu Menus @relation( fields: [menuId], references: [id] )
+  menuCategoryId Int
+  menuCategory MenuCategories @relation( fields: [menuCategoryId], references: [id] )
+}
+
+model MenuAddonCategories {
+  id Int @id @default(autoincrement())
+  menuId Int
+  menu Menus @relation( fields: [menuId], references: [id] )
+  addonCategoryId Int
+  addonCategory AddonCategories @relation( fields: [addonCategoryId], references: [id] )
+}
+
+model AddonCategories {
+  id Int @id @default(autoincrement())
+  name  String
+  isRequired Boolean? @default(false)
+  addons Addons[]
+  
+}
+model Addons{
+  id Int @id @default(autoincrement())
+  name  String
+  price Int?  @default(0)
+  isAvailable Boolean? @default(true)
+  addonCategory AddonCategories @relation( fields: [addonCategoryId], references: [id] )
+}
