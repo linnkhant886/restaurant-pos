@@ -7,41 +7,40 @@ import {
   Typography,
 } from "@mui/material";
 
-import { CreateMenu } from "../actions";
+import { CreateAddonCategory } from "../actions";
 import { prisma } from "@/libs/prisma";
 
-export default async function NewMenuPage() {
-  const menuCategories = await prisma.menuCategories.findMany();
-  // console.log(menuCategories);
+export default async function AddonCategories() {
+  const menus = await prisma.menus.findMany();
+  // console.log(menus);
 
   return (
     <>
-      <h1>New Menu Page</h1>
+      <h1>Addon Categories </h1>
 
       
       <Box
         component={"form"}
-        action={CreateMenu}
+        action={CreateAddonCategory}
         sx={{ mt: 2, display: "flex", flexDirection: "column" }}
       >
         <TextField placeholder="Name" name="name" />
-        <TextField placeholder="Price" sx={{ my: 2 }} name="price" />
-        <Typography variant="h4">Menu Category</Typography>
+        <Typography variant="h4" sx={{ mt: 2 }}>Menus</Typography>
         <Box sx={{ display: "flex" , border: "1px solid black", p: 1, my: 2}}>
-          {menuCategories.map((menuCategory) => (
+          {menus.map((menu) => (
             <FormControlLabel
-              key={menuCategory.id}
+              key={menu.id}
               control={
-                <Checkbox name="menuCategories" value={menuCategory.id} />
+                <Checkbox name="menus" value={menu.id} />
               }
-              label={menuCategory.name}
+              label={menu.name}
             />
           ))}
         </Box>
         <FormControlLabel
           control={<Checkbox defaultChecked />}
-          label="Available"
-          name="isAvailable"
+          label="isRequired"
+          name="isRequired"
         />
         <Button
           variant="contained"
