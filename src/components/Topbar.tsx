@@ -1,3 +1,7 @@
+'use client';
+
+import { signOut } from "next-auth/react";
+
 export function Topbar() {
   return (
     <div
@@ -13,7 +17,7 @@ export function Topbar() {
     >
       <h2>Foodie POS</h2>
       <h2>Sanchaung</h2>
-      <h2 style={{ cursor: "pointer" }}>Logout</h2>
+      <h2 style={{ cursor: "pointer" }} onClick={() => signOut()}>Logout</h2>
     </div>
   );
 }

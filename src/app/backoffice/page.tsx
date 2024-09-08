@@ -1,3 +1,7 @@
-export default function Orders() {
-  return <h1>Orders</h1>;
+import { getServerSession } from "next-auth";
+
+export default async function Orders() {
+ const session = await getServerSession();
+ console.log("seesion:",session)
+  return <h1>Orders  : {session?.user?.name}</h1>;
 }

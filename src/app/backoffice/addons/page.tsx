@@ -1,11 +1,11 @@
 import ItemCard from "@/components/ItemCard";
+import EggIcon from "@mui/icons-material/Egg";
 import { prisma } from "@/libs/prisma";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
-import ClassIcon from "@mui/icons-material/Class";
 
 export default async function MenusPage() {
-  const AddonCategories = await prisma.addonCategories.findMany();
+  const Addons = await prisma.addons.findMany();
   // console.log(AddonCategories)
   return (
     <>
@@ -15,18 +15,18 @@ export default async function MenusPage() {
           justifyContent: "space-between",
         }}
       >
-        <h1>AddonCategories </h1>
-        <Link href="/backoffice/addon-categories/new">
-          <Button variant="contained">New AddonCategory</Button>
+        <h1>Addons</h1>
+        <Link href="/backoffice/addons/new">
+          <Button variant="contained">New Addon</Button>
         </Link>
       </Box>
       <Box sx={{ mt: 3, display: "flex" }}>
-        {AddonCategories.map((addonCategory) => (
+        {Addons.map((addon) => (
           <ItemCard
-            key={addonCategory.id}
-            icon={<ClassIcon fontSize="large" />}
-            title={addonCategory.name}
-            href={`/backoffice/addon-categories/${addonCategory.id}`}
+            key={addon.id}
+            icon={<EggIcon fontSize="large" />}
+            title={addon.name}
+            href={`/backoffice/addons/${addon.id}`}
             isAvailable
           />
         ))}
