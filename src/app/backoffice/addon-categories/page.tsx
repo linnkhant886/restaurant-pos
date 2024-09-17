@@ -3,9 +3,11 @@ import { prisma } from "@/libs/prisma";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import ClassIcon from "@mui/icons-material/Class";
+import { getCompanyAddonCategories } from "@/libs/action";
 
 export default async function MenusPage() {
-  const AddonCategories = await prisma.addonCategories.findMany();
+  const AddonCategories = await getCompanyAddonCategories();
+  const IDs = AddonCategories.map((item) => item.id);
   // console.log(AddonCategories)
   return (
     <>

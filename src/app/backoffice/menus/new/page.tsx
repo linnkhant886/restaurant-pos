@@ -9,16 +9,18 @@ import {
 
 import { CreateMenu } from "../actions";
 import { prisma } from "@/libs/prisma";
+import { getCompanyId } from "@/libs/action";
 
 export default async function NewMenuPage() {
-  const menuCategories = await prisma.menuCategories.findMany();
+  const menuCategories = await prisma.menuCategories.findMany({
+    where: { companyId: await getCompanyId() },
+  });
   // console.log(menuCategories);
 
   return (
     <>
       <h1>New Menu Page</h1>
 
-      
       <Box
         component={"form"}
         action={CreateMenu}
@@ -27,7 +29,7 @@ export default async function NewMenuPage() {
         <TextField placeholder="Name" name="name" />
         <TextField placeholder="Price" sx={{ my: 2 }} name="price" />
         <Typography variant="h4">Menu Category</Typography>
-        <Box sx={{ display: "flex" , border: "1px solid black", p: 1, my: 2}}>
+        <Box sx={{ display: "flex", border: "1px solid black", p: 1, my: 2 }}>
           {menuCategories.map((menuCategory) => (
             <FormControlLabel
               key={menuCategory.id}

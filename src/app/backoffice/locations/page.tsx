@@ -1,14 +1,11 @@
 import ItemCard from "@/components/ItemCard";
 import { Box, Button } from "@mui/material";
-import CategoryIcon from "@mui/icons-material/Category";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Link from "next/link";
-import { prisma } from "@/libs/prisma";
-import { getCompanyId } from "@/libs/action";
+import {  getLocation } from "@/libs/action";
 
 export default async function MenuCategoriesPage() {
-  const menuCategories = await prisma.menuCategories.findMany({
-    where: { companyId: await getCompanyId() },
-  });
+  const locations = await getLocation();
   return (
     <>
       <Box
@@ -17,7 +14,7 @@ export default async function MenuCategoriesPage() {
           justifyContent: "flex-end",
         }}
       >
-        <Link href="/backoffice/menus-categories/new">
+        <Link href="/backoffice/locations/new">
           <Button
             variant="contained"
             sx={{
@@ -25,17 +22,17 @@ export default async function MenuCategoriesPage() {
               "&:hover": { bgcolor: "#2d4466" },
             }}
           >
-            New menu category
+            Add More Locations
           </Button>
         </Link>
       </Box>
       <Box sx={{ mt: 3, display: "flex" }}>
-        {menuCategories.map((menuCategory) => (
+        {locations.map((location) => (
           <ItemCard
-            key={menuCategory.id}
-            icon={<CategoryIcon fontSize="large" />}
-            title={menuCategory.name}
-            href={`/backoffice/menus-categories/${menuCategory.id}`}
+            key={location.id}
+            icon={<LocationOnIcon fontSize="large" />}
+            title={location.name}
+            href={`/backoffice/locations/${location.id}`}
             isAvailable
           />
         ))}

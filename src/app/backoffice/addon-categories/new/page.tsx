@@ -9,9 +9,10 @@ import {
 
 import { CreateAddonCategory } from "../actions";
 import { prisma } from "@/libs/prisma";
+import { getCompanyMenu } from "@/libs/action";
 
 export default async function AddonCategories() {
-  const menus = await prisma.menus.findMany();
+  const menus = await getCompanyMenu();
   // console.log(menus);
 
   return (

@@ -9,6 +9,7 @@ import {
 
 import { DeleteMenu, getMenu, UpdateMenu } from "../actions";
 import { prisma } from "@/libs/prisma";
+import { getCompanyId } from "@/libs/action";
 
 export interface prop {
   params: { id: string };
@@ -19,8 +20,10 @@ export default async function SingleMenu({ params }: prop) {
 
   const menu = await getMenu(Number(id));
   const selected = menu?.menuCategoriesMenus.map((item) => item.menuCategoryId);
-  const menuCategories = await prisma.menuCategories.findMany();
-  //   console.log(menu);
+  const menuCategories = await prisma.menuCategories.findMany({
+    where: { companyId: await getCompanyId() },
+  });
+    console.log(menuCategories);
 
   return (
     <>

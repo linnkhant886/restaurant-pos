@@ -1,8 +1,8 @@
-'use client';
-
-import { signOut } from "next-auth/react";
-
-export function Topbar() {
+import { getLocation } from '@/libs/action';
+import LogoutButton from './LogoutButton'
+export async function Topbar() {
+  const location = await getLocation();
+  console.log(location)
   return (
     <div
       style={{
@@ -16,8 +16,8 @@ export function Topbar() {
       }}
     >
       <h2>Foodie POS</h2>
-      <h2>Sanchaung</h2>
-      <h2 style={{ cursor: "pointer" }} onClick={() => signOut()}>Logout</h2>
+      <h2>{location[0].name}</h2>
+      <LogoutButton />
     </div>
   );
 }

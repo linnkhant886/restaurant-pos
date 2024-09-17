@@ -3,10 +3,11 @@ import EggIcon from "@mui/icons-material/Egg";
 import { prisma } from "@/libs/prisma";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
+import { getCompanyAddon } from "@/libs/action";
 
 export default async function MenusPage() {
-  const Addons = await prisma.addons.findMany();
-  // console.log(AddonCategories)
+  const Addons = await getCompanyAddon()
+  // console.log(Addons)
   return (
     <>
       <Box

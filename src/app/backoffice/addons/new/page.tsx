@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 
 import { CreateAddon } from "../actions";
-import { prisma } from "@/libs/prisma";
+import { getCompanyAddonCategories } from "@/libs/action";
 
 export default async function AddonCategories() {
-  const AddonCategories = await prisma.addonCategories.findMany();
+  const AddonCategories = await getCompanyAddonCategories();
   // console.log(menus);
 
   return (

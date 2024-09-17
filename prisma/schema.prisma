@@ -14,50 +14,112 @@ datasource db {
 }
 
 model Menus {
-  id  Int @id @default(autoincrement())
-  name  String
-  price Int?  @default(0)
-  isAvailable Boolean? @default(true)
-  menuCategoriesMenus MenuCategoriesMenus[]
-  menuAddonCategories MenuAddonCategories[]
+  id                     Int                      @id @default(autoincrement())
+  name                   String
+  price                  Int?                     @default(0)
+  isAvailable            Boolean?                 @default(true)
+  menuCategoriesMenus    MenuCategoriesMenus[]
+  menuAddonCategories    MenuAddonCategories[]
+  DisabledLocationsMenus DisabledLocationsMenus[]
 }
 
 model MenuCategories {
-  id  Int @id @default(autoincrement())
-  name  String
-  menuCategoriesMenus MenuCategoriesMenus[]
+  id                              Int                               @id @default(autoincrement())
+  name                            String
+  menuCategoriesMenus             MenuCategoriesMenus[]
+  companyId                       Int?
+  company                         Company?                          @relation(fields: [companyId], references: [id])
+  DisabledLocationsMenuCategories DisabledLocationsMenuCategories[]
 }
 
 model MenuCategoriesMenus {
-  id Int @id @default(autoincrement())
-  menuId Int
-  menu Menus @relation( fields: [menuId], references: [id] )
+  id             Int            @id @default(autoincrement())
+  menuId         Int
+  menu           Menus          @relation(fields: [menuId], references: [id])
   menuCategoryId Int
-  menuCategory MenuCategories @relation( fields: [menuCategoryId], references: [id] )
+  menuCategory   MenuCategories @relation(fields: [menuCategoryId], references: [id])
 }
 
 model MenuAddonCategories {
-  id Int @id @default(autoincrement())
-  menuId Int
-  menu Menus @relation( fields: [menuId], references: [id] )
+  id              Int             @id @default(autoincrement())
+  menuId          Int
+  menu            Menus           @relation(fields: [menuId], references: [id])
   addonCategoryId Int
-  addonCategory AddonCategories @relation( fields: [addonCategoryId], references: [id] )
-
+  addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
 }
 
 model AddonCategories {
-  id Int @id @default(autoincrement())
-  name  String
-  isRequired Boolean? @default(false)
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  isRequired          Boolean?              @default(false)
   menuAddonCategories MenuAddonCategories[]
-  addons Addons[]
-  
+  addons              Addons[]
 }
-model Addons{
-  id Int @id @default(autoincrement())
-  name  String
-  price Int?  @default(0)
-  isAvailable Boolean? @default(true)
+
+model Addons {
+  id              Int             @id @default(autoincrement())
+  name            String
+  price           Int?            @default(0)
+  isAvailable     Boolean?        @default(true)
   addonCategoryId Int
-  addonCategory AddonCategories @relation( fields: [addonCategoryId], references: [id] )
+  addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
+}
+
+model Company {
+  id             Int              @id @default(autoincrement())
+  name           String
+  users          Users[]
+  menucategories MenuCategories[]
+  locations      Locations[]
+}
+
+model Users {
+  id               Int                @id @default(autoincrement())
+  name             String
+  email            String
+  companyId        Int
+  company          Company            @relation(fields: [companyId], references: [id])
+  SelectedLocation SelectedLocation[]
+}
+
+model Locations {
+  id                              Int                               @id @default(autoincrement())
+  name                            String
+  companyId                       Int
+  company                         Company                           @relation(fields: [companyId], references: [id])
+  tables                          Tables[]
+  SelectedLocation                SelectedLocation[]
+  DisabledLocationsMenuCategories DisabledLocationsMenuCategories[]
+  DisabledLocationsMenus          DisabledLocationsMenus[]
+}
+
+model Tables {
+  id         Int       @id @default(autoincrement())
+  name       String
+  locationId Int
+  location   Locations @relation(fields: [locationId], references: [id])
+}
+
+model SelectedLocation {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  locationId Int
+  user       Users     @relation(fields: [userId], references: [id])
+  location   Locations @relation(fields: [locationId], references: [id])
+}
+
+model DisabledLocationsMenuCategories {
+  id             Int            @id @default(autoincrement())
+  locationId     Int
+  menuCategoryId Int
+  location       Locations      @relation(fields: [locationId], references: [id])
+  menuCategory   MenuCategories @relation(fields: [menuCategoryId], references: [id])
+}
+
+model DisabledLocationsMenus {
+  id         Int       @id @default(autoincrement())
+  locationId Int
+  menuId     Int
+  location   Locations @relation(fields: [locationId], references: [id])
+  menu       Menus     @relation(fields: [menuId], references: [id])
 }
