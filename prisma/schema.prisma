@@ -17,7 +17,6 @@ model Menus {
   id                     Int                      @id @default(autoincrement())
   name                   String
   price                  Int?                     @default(0)
-  isAvailable            Boolean?                 @default(true)
   menuCategoriesMenus    MenuCategoriesMenus[]
   menuAddonCategories    MenuAddonCategories[]
   DisabledLocationsMenus DisabledLocationsMenus[]
@@ -27,8 +26,8 @@ model MenuCategories {
   id                              Int                               @id @default(autoincrement())
   name                            String
   menuCategoriesMenus             MenuCategoriesMenus[]
-  companyId                       Int?
-  company                         Company?                          @relation(fields: [companyId], references: [id])
+  companyId                       Int
+  company                         Company                         @relation(fields: [companyId], references: [id])
   DisabledLocationsMenuCategories DisabledLocationsMenuCategories[]
 }
 
@@ -97,6 +96,7 @@ model Tables {
   id         Int       @id @default(autoincrement())
   name       String
   locationId Int
+  qrCodeImageUrl String
   location   Locations @relation(fields: [locationId], references: [id])
 }
 

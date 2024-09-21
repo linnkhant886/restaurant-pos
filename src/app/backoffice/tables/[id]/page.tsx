@@ -1,17 +1,17 @@
 import { getCompanyTables, getLocation } from "@/libs/action";
 import { Box, Button, TextField } from "@mui/material";
 import { DeleteTable, UpdateTable } from "../actions";
+import QrImage from "@/components/QrImage";
 
 export interface prop {
   params: { id: string };
 }
 export default async function UpdateAddonCategoryPage({ params }: prop) {
   const { id } = params;
-  const table =
-    (await getCompanyTables()).find((item) => item.id == Number(id)) || null;
-  const locationIds = (await getLocation())[0].id;
-
-  // console.log(table);
+  const table = (await getCompanyTables()).find(
+    (item) => item.id == Number(id)
+  );
+  const qrCodeUrl = table?.qrCodeImageUrl as string;
 
   return (
     <>
@@ -26,6 +26,9 @@ export default async function UpdateAddonCategoryPage({ params }: prop) {
         </Button>
         <input type="hidden" defaultValue={id} name="DeleteID" />
       </Box>
+
+      <QrImage qrImageUrl={qrCodeUrl} />
+
       <Box
         component={"form"}
         action={UpdateTable}

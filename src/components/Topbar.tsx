@@ -1,8 +1,13 @@
-import { getLocation } from '@/libs/action';
-import LogoutButton from './LogoutButton'
+import { getLocation, getSelectedLocation } from "@/libs/action";
+import LogoutButton from "./LogoutButton";
 export async function Topbar() {
   const location = await getLocation();
-  console.log(location)
+  const selectedLocation = await getSelectedLocation();
+
+  const Selected = location.find(
+    (item) => item.id === selectedLocation?.locationId
+  );
+  
   return (
     <div
       style={{
@@ -16,7 +21,7 @@ export async function Topbar() {
       }}
     >
       <h2>Foodie POS</h2>
-      <h2>{location[0].name}</h2>
+      <h2>{Selected?.name}</h2>
       <LogoutButton />
     </div>
   );

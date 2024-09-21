@@ -2,6 +2,7 @@
 
 import { getServerSession, User } from "next-auth";
 import { prisma } from "./prisma";
+import { qrCodeImageUrl } from "@/app/backoffice/tables/actions";
 
 export async function getUser(email: string) {
   await prisma.users.findFirst({ where: { email } });
@@ -74,13 +75,23 @@ export async function CreateDefaultData(nextUser: User) {
     },
   });
 
-  await prisma.tables.create({
+  const table = await prisma.tables.create({
     data: {
       name: "default Table",
       locationId: location.id,
+      qrCodeImageUrl: ""
     },
   });
 
+  await prisma.tables.update({
+    where: {
+      id: table.id,
+    },
+    data: {
+      ...table,
+      qrCodeImageUrl: await qrCodeImageUrl(table),
+    },
+  });
 
   await prisma.selectedLocation.create({
     data: {
@@ -109,7 +120,10 @@ export async function getCompanyId() {
 
 export async function getCompanyMenuCategories() {
   const companyId = await getCompanyId();
-  return await prisma.menuCategories.findMany({ where: { companyId } });
+  return await prisma.menuCategories.findMany({
+    where: { companyId },
+    include: { DisabledLocationsMenuCategories: true },
+  });
 }
 
 export async function getCompanyMenu() {
@@ -122,7 +136,10 @@ export async function getCompanyMenu() {
   });
 
   const menuId = menuCategoryMenu.map((menu) => menu.menuId);
-  return await prisma.menus.findMany({ where: { id: { in: menuId } } });
+  return await prisma.menus.findMany({
+    where: { id: { in: menuId } },
+    include: { DisabledLocationsMenus: true },
+  });
 }
 
 export async function getCompanyAddonCategories() {
@@ -148,7 +165,6 @@ export async function getCompanyAddon() {
   });
 }
 
-
 export async function getLocation() {
   const companyId = await getCompanyId();
   return await prisma.locations.findMany({ where: { companyId } });
@@ -156,10 +172,10 @@ export async function getLocation() {
 export async function getCompanyTables() {
   const locationId = await getLocation();
   const locationIds = locationId.map((item) => item.id);
-  return await prisma.tables.findMany({ where: { locationId: { in: locationIds } } });
-  
+  return await prisma.tables.findMany({
+    where: { locationId: { in: locationIds } },
+  });
 }
-
 
 export async function getDBuserId() {
   const session = await getServerSession();
@@ -171,10 +187,7 @@ export async function getDBuserId() {
   return user?.id;
 }
 
-
 export async function getSelectedLocation() {
   const userId = await getDBuserId();
   return await prisma.selectedLocation.findFirst({ where: { userId } });
 }
-
-

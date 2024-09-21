@@ -1,43 +1,69 @@
-'use server'
+"use server";
 
-import { prisma } from "@/libs/prisma"
-import exp from "constants"
-import { redirect } from "next/navigation"
+import { getCompanyId, getSelectedLocation } from "@/libs/action";
+import { prisma } from "@/libs/prisma";
+import { redirect } from "next/navigation";
 
-export async function CreateMenuCategory(formData :any) {
-    const MenuCategory = formData.get('createMenuCategory')
-    // console.log(formData)
-    await prisma.menuCategories.create({
-        data: {
-            name: MenuCategory
-        }
-    })
-    redirect ('/backoffice/menus-categories')
+export async function CreateMenuCategory(formData: any) {
+  const MenuCategory = formData.get("createMenuCategory");
+  // console.log(formData)
+  await prisma.menuCategories.create({
+    data: {
+      name: MenuCategory,
+      companyId: (await getCompanyId()) as number,
+    },
+  });
+  redirect("/backoffice/menus-categories");
 }
 
+export async function UpdateMenuCategoryID(formData: FormData) {
+  const MenuCategoryId = formData.get("MenuCategoryId");
+  const MenuCategoryName = formData.get("MenuCategoryName") as string;
+  const isAvailable = formData.get("isAvailable") ? true : false;
 
-export async function UpdateMenuCategoryID(formData:any) {
-    console.log(formData)
-    const MenuCategoryId = formData.get('MenuCategoryId')
-    const MenuCategoryName = formData.get('MenuCategoryName')
-    await prisma.menuCategories.update({
+  // return console.log(formData);
+  await prisma.menuCategories.update({
+    where: {
+      id: Number(MenuCategoryId),
+    },
+    data: {
+      name: MenuCategoryName,
+    },
+  });
+
+  if (!isAvailable) {
+    await prisma.disabledLocationsMenuCategories.create({
+      data: {
+        menuCategoryId: Number(MenuCategoryId),
+        locationId: (await getSelectedLocation())?.locationId as number,
+      },
+    });
+  } else {
+    const disabledLocationsMenuCategories =
+      await prisma.disabledLocationsMenuCategories.findFirst({
         where: {
-            id: Number(MenuCategoryId)
+          menuCategoryId: Number(MenuCategoryId),
         },
-        data: {
-            name: MenuCategoryName
-        }
-    })
-    redirect ('/backoffice/menus-categories')
+      });
+
+    if (disabledLocationsMenuCategories) {
+      await prisma.disabledLocationsMenuCategories.delete({
+        where: {
+          id: disabledLocationsMenuCategories?.id,
+        },
+      });
+    }
+  }
+  redirect("/backoffice/menus-categories");
 }
 
-export async function DeleteMenuCategoryID(formData:any) {
-    // console.log(formData)
-    const MenuCategoryId = formData.get('DeleteID')
-    await prisma.menuCategories.delete({
-        where: {
-            id: Number(MenuCategoryId)
-        }
-    })
-    redirect ('/backoffice/menus-categories')
+export async function DeleteMenuCategoryID(formData: any) {
+  // console.log(formData)
+  const MenuCategoryId = formData.get("DeleteID");
+  await prisma.menuCategories.delete({
+    where: {
+      id: Number(MenuCategoryId),
+    },
+  });
+  redirect("/backoffice/menus-categories");
 }

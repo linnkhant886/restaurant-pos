@@ -29,7 +29,7 @@ export default async function UpdateMenuCategory({ params }: prop) {
   // console.log(companyLocation)
 
   const isSelected = selectedLocation?.locationId === Number(id)
-  console.log(isSelected)
+  // console.log(isSelected)
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box component={"form"} action={UpdateLocation}>

@@ -82,7 +82,7 @@ export async function UpdateAddonCategory(formData: FormData) {
       addonCategoryId: Number(id),
     }));
 
-    console.log(data);
+    // console.log(data);
     await prisma.menuAddonCategories.createMany({
       data,
     });

@@ -5,10 +5,13 @@ import Link from "next/link";
 
 interface Props {
   menu: Menu;
+  isAvailable: boolean;
 }
 
-export default function MenuCard({ menu }: Props) {
-  const { name, price, isAvailable } = menu;
+export default async function MenuCard({ menu ,isAvailable}: Props) {
+  const { id, name, price } = menu;
+  // console.log(menu);
+
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}
@@ -59,8 +62,8 @@ export default function MenuCard({ menu }: Props) {
             }}
           >
             <Chip
-              label={menu.isAvailable ? "Available" : "Sold out"}
-              color={menu.isAvailable ? "success" : "error"}
+              label={isAvailable ? "Available" : "Sold out"}
+              color={isAvailable ? "success" : "error"}
               sx={{ fontSize: "0.75rem", padding: "2px 8px" }}
             />
           </Box>

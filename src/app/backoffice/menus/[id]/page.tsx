@@ -19,11 +19,16 @@ export default async function SingleMenu({ params }: prop) {
   const { id } = params;
 
   const menu = await getMenu(Number(id));
+  console.log(menu)
   const selected = menu?.menuCategoriesMenus.map((item) => item.menuCategoryId);
   const menuCategories = await prisma.menuCategories.findMany({
     where: { companyId: await getCompanyId() },
   });
-    console.log(menuCategories);
+
+  const isAvailable = menu?.DisabledLocationsMenus.find(
+    (item) => item.menuId === Number(id) 
+  ) ? false : true;
+    // console.log(isAvailable);
 
   return (
     <>
@@ -69,7 +74,7 @@ export default async function SingleMenu({ params }: prop) {
         </Box>
         <FormControlLabel
           control={
-            <Checkbox defaultChecked={menu?.isAvailable ? true : false} />
+            <Checkbox defaultChecked={isAvailable} />
           }
           label="Available"
           name="isAvailable"

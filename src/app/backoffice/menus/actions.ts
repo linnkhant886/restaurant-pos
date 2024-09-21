@@ -1,19 +1,18 @@
 "use server";
 
+import { getSelectedLocation } from "@/libs/action";
 import { prisma } from "@/libs/prisma";
 import { redirect } from "next/navigation";
 
 export async function CreateMenu(formData: FormData) {
   const name = formData.get("name") as string;
   const price = formData.get("price");
-  const isAvailable = formData.get("isAvailable") ? true : false;
   const menuCategories = formData.getAll("menuCategories");
 
   const menu = await prisma.menus.create({
     data: {
       name: name,
       price: Number(price),
-      isAvailable,
     },
   });
 
@@ -30,7 +29,7 @@ export async function CreateMenu(formData: FormData) {
 export async function getMenu(id: number) {
   const Menu = await prisma.menus.findFirst({
     where: { id },
-    include: { menuCategoriesMenus: true },
+    include: { menuCategoriesMenus: true, DisabledLocationsMenus: true },
   });
 
   return Menu;
@@ -40,10 +39,9 @@ export async function UpdateMenu(formData: FormData) {
   const id = formData.get("id");
   const name = formData.get("name") as string;
   const price = formData.get("price");
-  const isAvailable = formData.get("isAvailable") ? true : false;
+  const isAvaiable = formData.get("isAvailable") ? true : false;
   const updateMenuCategoriesIds = formData.getAll("menuCategories");
-
-  console.log(formData);
+  // return console.log(formData , isAvaiable);
 
   await prisma.menus.update({
     where: {
@@ -52,7 +50,6 @@ export async function UpdateMenu(formData: FormData) {
     data: {
       name: name,
       price: Number(price),
-      isAvailable,
     },
   });
 
@@ -64,9 +61,9 @@ export async function UpdateMenu(formData: FormData) {
   const menuCategoriesIds = menuCategoriesMenus.map(
     (item) => item.menuCategoryId
   );
-  console.log(menuCategoriesIds);
+  // console.log(menuCategoriesIds);
 
-  console.log(updateMenuCategoriesIds);
+  // console.log(updateMenuCategoriesIds);
 
   const isSame =
     menuCategoriesIds.length === updateMenuCategoriesIds.length &&
@@ -86,11 +83,35 @@ export async function UpdateMenu(formData: FormData) {
       menuCategoryId: Number(menuCategoryId),
     }));
 
-    console.log(data);
+    // console.log(data);
     await prisma.menuCategoriesMenus.createMany({
       data,
     });
-    console.log("not same");
+    // console.log("not same");
+  }
+
+  if (!isAvaiable) {
+    await prisma.disabledLocationsMenus.create({
+      data: {
+        locationId: (await getSelectedLocation())?.locationId as number,
+        menuId: Number(id),
+      },
+    });
+  } else {
+    const disabledLocationsMenus =
+      await prisma.disabledLocationsMenus.findFirst({
+        where: {
+          menuId: Number(id),
+        },
+      });
+
+    if (disabledLocationsMenus) {
+      await prisma.disabledLocationsMenus.delete({
+        where: {
+          id: disabledLocationsMenus?.id,
+        },
+      });
+    }
   }
 
   redirect("/backoffice/menus");

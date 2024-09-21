@@ -2,13 +2,17 @@ import ItemCard from "@/components/ItemCard";
 import { Box, Button } from "@mui/material";
 import CategoryIcon from "@mui/icons-material/Category";
 import Link from "next/link";
-import { prisma } from "@/libs/prisma";
-import { getCompanyId } from "@/libs/action";
+import {
+  getCompanyId,
+  getCompanyMenuCategories,
+  getLocation,
+  getSelectedLocation,
+} from "@/libs/action";
 
 export default async function MenuCategoriesPage() {
-  const menuCategories = await prisma.menuCategories.findMany({
-    where: { companyId: await getCompanyId() },
-  });
+  const menuCategories = await getCompanyMenuCategories();
+  const selectedLocation = (await getSelectedLocation())?.locationId;
+  console.log(menuCategories);
   return (
     <>
       <Box
@@ -30,15 +34,24 @@ export default async function MenuCategoriesPage() {
         </Link>
       </Box>
       <Box sx={{ mt: 3, display: "flex" }}>
-        {menuCategories.map((menuCategory) => (
-          <ItemCard
-            key={menuCategory.id}
-            icon={<CategoryIcon fontSize="large" />}
-            title={menuCategory.name}
-            href={`/backoffice/menus-categories/${menuCategory.id}`}
-            isAvailable
-          />
-        ))}
+        {menuCategories.map((menuCategory) => {
+          const isAvailable = menuCategory.DisabledLocationsMenuCategories.find(
+            (item) =>
+              item.menuCategoryId === menuCategory.id &&
+              item.locationId === selectedLocation
+          )
+            ? false
+            : true;
+          return (
+            <ItemCard
+              key={menuCategory.id}
+              icon={<CategoryIcon fontSize="large" />}
+              title={menuCategory.name}
+              href={`/backoffice/menus-categories/${menuCategory.id}`}
+              isAvailable={isAvailable}
+            />
+          );
+        })}
       </Box>
     </>
   );
