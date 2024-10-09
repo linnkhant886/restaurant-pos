@@ -28,7 +28,7 @@ export default async function MenusPage() {
           <Button variant="contained">New menu</Button>
         </Link>
       </Box>
-      <Box sx={{ mt: 3, display: "flex" }}>
+      <Box sx={{ mt: 3, display: "flex"  , flexWrap: "wrap" , gap: 4}}>
         {menus.map((menu) => {
           const isAvailable = menu.DisabledLocationsMenus.find(
             (item) =>

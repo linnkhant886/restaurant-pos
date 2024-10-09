@@ -79,7 +79,7 @@ export async function CreateDefaultData(nextUser: User) {
     data: {
       name: "default Table",
       locationId: location.id,
-      qrCodeImageUrl: ""
+      qrCodeImageUrl: "",
     },
   });
 
@@ -189,5 +189,83 @@ export async function getDBuserId() {
 
 export async function getSelectedLocation() {
   const userId = await getDBuserId();
-  return await prisma.selectedLocation.findFirst({ where: { userId } });
+  return await prisma.selectedLocation.findFirst({
+    where: { userId },
+    include: { location: true },
+  });
+}
+
+export async function getSelectedLocationTables() {
+  const selectedLocationId = (await getSelectedLocation())?.locationId;
+  return prisma.tables.findMany({ where: { locationId: selectedLocationId } });
+}
+
+export async function getCompanyByTableId(tableId: string) {
+  const table = await prisma.tables.findFirst({
+    where: { id: Number(tableId) },
+  });
+  const location = await prisma.locations.findFirst({
+    where: { id: table?.locationId },
+  });
+
+  return await prisma.company.findFirst({
+    where: { id: location?.companyId },
+  });
+}
+
+export async function getMenuCategoryByTableId(tableId: string) {
+  const company = await getCompanyByTableId(tableId);
+
+  const table = await prisma.tables.findFirst({
+    where: { id: Number(tableId) },
+  });
+  const location = await prisma.locations.findFirst({
+    where: { id: table?.locationId },
+  });
+
+  const menuCategories = await prisma.menuCategories.findMany({
+    where: { companyId: company?.id, isArchived: false },
+    include: { menuCategoriesMenus: true },
+  });
+
+  const DisabledLocationsMenuCategories =
+    await prisma.disabledLocationsMenuCategories.findMany({
+      where: { locationId: location?.id },
+    });
+
+  const disabledMenuCategoriesIds = DisabledLocationsMenuCategories.map(
+    (item) => item.menuCategoryId
+  );
+  return menuCategories.filter(
+    (item) => !disabledMenuCategoriesIds.includes(item.id)
+  );
+
+  // console.log(menuCategories)
+  // console.log(DisabledLocationsMenuCategories)
+  // console.log(availableMenuCategories);
+}
+
+export async function getMenuByTableId(menuCategoriesIds: number[]) {
+  console.log(menuCategoriesIds);
+
+  const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
+    where: { menuCategoryId: { in: menuCategoriesIds } },
+  });
+
+  const menuIds = menuCategoriesMenus.map((item) => item.menuId);
+  const menu = await prisma.menus.findMany({
+    where: { id: { in: menuIds } },
+  });
+
+  const disabledLocationsMenu = await prisma.disabledLocationsMenus.findMany({
+    where: { menuId: { in: menuIds } },
+  });
+
+  const availableMenu = menu.filter(
+    (item) =>
+      !disabledLocationsMenu
+        .map((item) => item.menuId)
+        .includes(item.id)
+  )
+  return availableMenu;
 }

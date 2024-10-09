@@ -8,10 +8,13 @@ interface Props {
   isAvailable: boolean;
 }
 
-export default async function MenuCard({ menu ,isAvailable}: Props) {
+export default async function MenuCard({ menu, isAvailable }: Props) {
   const { id, name, price } = menu;
   // console.log(menu);
 
+  const image = menu.imageUrl
+    ? menu.imageUrl
+    : "https://images.squarespace-cdn.com/content/v1/5a81c36ea803bb1dd7807778/1610403788186-K2ATWJRYLHVC4ENCZZ7D/Shan+khaut+swe+%28Shan+sticky+noodles%29";
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}
@@ -27,7 +30,7 @@ export default async function MenuCard({ menu ,isAvailable}: Props) {
         }}
       >
         <img
-          src="https://images.squarespace-cdn.com/content/v1/5a81c36ea803bb1dd7807778/1610403788186-K2ATWJRYLHVC4ENCZZ7D/Shan+khaut+swe+%28Shan+sticky+noodles%29"
+          src={image}
           alt="Menu Item"
           width="300"
           height="120"

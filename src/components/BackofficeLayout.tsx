@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Topbar } from "./Topbar";
 import { Sidebar } from "./Sidebar";
 import { Box } from "@mui/material";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Props {
   children: ReactNode;

@@ -5,13 +5,14 @@ import {
 } from "@mui/material";
 
 import { CreateTable } from "../actions";
-import { getLocation } from "@/libs/action";
+import { getLocation, getSelectedLocation } from "@/libs/action";
+import React from "react";
 
 
 export default async function Tables() {
 
-  const locationIds = (await getLocation())[0].id;
-  // console.log(locationIds);
+  const locationIds = (await getSelectedLocation())?.locationId;
+  console.log(locationIds);
 
   return (
     <>

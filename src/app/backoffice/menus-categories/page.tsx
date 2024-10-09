@@ -12,7 +12,8 @@ import {
 export default async function MenuCategoriesPage() {
   const menuCategories = await getCompanyMenuCategories();
   const selectedLocation = (await getSelectedLocation())?.locationId;
-  console.log(menuCategories);
+  // console.log(menuCategories);
+  
   return (
     <>
       <Box

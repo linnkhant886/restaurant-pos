@@ -1,14 +1,13 @@
 import ItemCard from "@/components/ItemCard";
-import { prisma } from "@/libs/prisma";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
-import { getCompanyAddonCategories, getCompanyTables } from "@/libs/action";
+import {  getSelectedLocationTables } from "@/libs/action";
 
 
 export default async function MenusPage() {
-  const tables = await getCompanyTables();
-  // console.log(AddonCategories)
+  const tables = await getSelectedLocationTables();
+  // return console.log(tables)
   return (
     <>
       <Box
