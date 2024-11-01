@@ -1,25 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Tabs,
-  Tab,
-  Box,
-} from "@mui/material";
+import { Container, Tabs, Tab, Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuCategoryType } from "@/app/order/page";
-import { Company, Menus } from "@prisma/client";
+import { Company, Menus, Orders } from "@prisma/client";
 import OrderCardMenu from "@/components/OrderCardMenu";
+import OrderAppHeader from "./OrderAppHeader";
 
 interface Props {
   menuCategories: MenuCategoryType[];
   company: Company;
   menu: Menus[];
   tableId: string;
+  cartOrders:Orders[]
 }
 
 const theme = createTheme({
@@ -43,7 +37,8 @@ export default function RestaurantMenuMUI({
   menuCategories,
   company,
   menu,
-  tableId
+  tableId,
+  cartOrders
 }: Props) {
   const [showMenu, setShowMenu] = useState<Menus[]>([]);
   const [activeCategory, setActiveCategory] = useState<number>(0);
@@ -62,13 +57,7 @@ export default function RestaurantMenuMUI({
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {company.name}
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <OrderAppHeader company={company} cartOrders={cartOrders} tableId={tableId} />
 
       <Container maxWidth="md" sx={{ mt: 4 }}>
         <Tabs
@@ -88,7 +77,11 @@ export default function RestaurantMenuMUI({
         </Tabs>
         <Box sx={{ bgcolor: "grey", width: "100%" }}>
           {showMenu.map((item) => (
-            <OrderCardMenu key={item.id} items={[item]} href={`order/menu/${item.id}?table=${tableId}`} />
+            <OrderCardMenu
+              key={item.id}
+              items={[item]}
+              href={`order/menu/${item.id}?tableId=${tableId}`}
+            />
           ))}
         </Box>
       </Container>

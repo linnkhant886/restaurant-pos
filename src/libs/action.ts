@@ -246,7 +246,6 @@ export async function getMenuCategoryByTableId(tableId: string) {
 }
 
 export async function getMenuByTableId(menuCategoriesIds: number[]) {
-  console.log(menuCategoriesIds);
 
   const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
     where: { menuCategoryId: { in: menuCategoriesIds } },

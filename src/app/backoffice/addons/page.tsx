@@ -21,7 +21,7 @@ export default async function MenusPage() {
           <Button variant="contained">New Addon</Button>
         </Link>
       </Box>
-      <Box sx={{ mt: 3, display: "flex" }}>
+      <Box sx={{ mt: 3, display: "flex" , flexWrap: "wrap"  }}>
         {Addons.map((addon) => (
           <ItemCard
             key={addon.id}
