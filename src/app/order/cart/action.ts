@@ -81,7 +81,7 @@ export async function getTotalPrice(tableId: number) {
 
 export async function getActiveOrderTotalPrice(tableId: number) {
   const orders = await prisma.orders.findMany({
-    where: { tableId, status: ORDERSTATUS.PENDING },
+    where: { tableId, status: { not: ORDERSTATUS.CART } },
     include: { menu: true, OrdersAddons: true },
   });
   let totalPrice = 0;

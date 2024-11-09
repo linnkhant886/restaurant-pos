@@ -10,7 +10,6 @@ import {
   Divider,
   Button,
 } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React from "react";
 import { prisma } from "@/libs/prisma";
@@ -19,20 +18,24 @@ import { getActiveOrderTotalPrice } from "../cart/action";
 import { ORDERSTATUS } from "@prisma/client";
 import AddIcon from "@mui/icons-material/Add";
 
+import { OrderStatusUpdate } from "@/components/OrderStatusUpate";
+import { OrderWithOrdersAddons } from "../menu/[id]/page";
+
 interface Props {
   searchParams: { tableId: string };
 }
 
 export default async function CartPage({ searchParams }: Props) {
   const tableId = Number(searchParams.tableId);
-  const cartOrders = await prisma.orders.findMany({
-    where: { tableId, status: ORDERSTATUS.PENDING },
+
+  const cartOrders: OrderWithOrdersAddons[] = await prisma.orders.findMany({
+    where: { tableId, status: { not: ORDERSTATUS.CART } },
     include: {
       menu: true,
+      OrdersAddons: true,
     },
   });
 
-  //   console.log(cartOrders);
   if (!cartOrders.length) {
     return null;
   }
@@ -71,7 +74,7 @@ export default async function CartPage({ searchParams }: Props) {
 
       <List>
         {cartOrders.map(async (cartOrder) => {
-          const { id, menu, quantity } = cartOrder;
+          const { id, menu, quantity, status } = cartOrder;
           const orderAddon = await prisma.ordersAddons.findMany({
             where: { orderId: id },
             include: { addon: true },
@@ -134,6 +137,9 @@ export default async function CartPage({ searchParams }: Props) {
                       </>
                     }
                   />
+                  <Box sx={{ mr: 6 }}>
+                    <OrderStatusUpdate order={cartOrder} />
+                  </Box>
 
                   <Box>
                     {/* //   quantity section */}

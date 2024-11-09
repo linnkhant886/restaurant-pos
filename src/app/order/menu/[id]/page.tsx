@@ -8,7 +8,7 @@ interface Props {
 }
 
 export type OrderWithOrdersAddons = Prisma.OrdersGetPayload<{
-  include: { OrdersAddons: true };
+  include: { OrdersAddons: true ,menu: true};
 }>;
 
 export default async function MenuDetailPage({ params, searchParams }: Props) {
@@ -35,7 +35,7 @@ export default async function MenuDetailPage({ params, searchParams }: Props) {
   if(orderId) {
     order = await prisma.orders.findFirst({
       where: { id: orderId },
-      include: { OrdersAddons: true },
+      include: { OrdersAddons: true ,menu: true},
     });
   }
 
