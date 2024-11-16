@@ -8,7 +8,6 @@ import { getCompanyAddonCategories } from "@/libs/action";
 export default async function MenusPage() {
   const AddonCategories = await getCompanyAddonCategories();
   const IDs = AddonCategories.map((item) => item.id);
-  // console.log(AddonCategories)
   return (
     <>
       <Box

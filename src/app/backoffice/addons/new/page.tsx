@@ -12,7 +12,6 @@ import { getCompanyAddonCategories } from "@/libs/action";
 
 export default async function AddonCategories() {
   const AddonCategories = await getCompanyAddonCategories();
-  // console.log(menus);
 
   return (
     <>

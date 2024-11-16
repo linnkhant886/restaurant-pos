@@ -12,7 +12,6 @@ import React from "react";
 export default async function Tables() {
 
   const locationIds = (await getSelectedLocation())?.locationId;
-  console.log(locationIds);
 
   return (
     <>

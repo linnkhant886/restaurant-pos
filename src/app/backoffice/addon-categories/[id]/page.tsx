@@ -18,8 +18,7 @@ export default async function UpdateAddonCategoryPage({ params }: prop) {
   const AddonCategory = await getAddonCategory(Number(id));
   const select = AddonCategory?.menuAddonCategories.map((item) => item.menuId);
   const menus = await prisma.menus.findMany();
-    // console.log(AddonCategory);
-    // console.log(select);
+   
     
   return (
     <>

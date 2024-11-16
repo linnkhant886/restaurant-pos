@@ -17,7 +17,6 @@ export type MenuCategoryType = Prisma.MenuCategoriesGetPayload<{
 
 export default async function Order({ searchParams }: Props) {
   const { tableId } = searchParams;
-  // console.log(tableId);
   const Company = await getCompanyByTableId(tableId);
   const MenuCategories = await getMenuCategoryByTableId(tableId);
   const menuCategoriesIds = MenuCategories.map((item) => item.id);

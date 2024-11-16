@@ -13,7 +13,7 @@ import { getCompanyMenu } from "@/libs/action";
 
 export default async function AddonCategories() {
   const menus = await getCompanyMenu();
-  // console.log(menus);
+ 
 
   return (
     <>

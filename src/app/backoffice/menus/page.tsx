@@ -11,9 +11,7 @@ export default async function MenusPage() {
   const selectedLocation = (await getSelectedLocation())?.locationId;
   const menus = await getCompanyMenu();
 
-  //  \
-  //   console.log(menus);
-  //   console.log(fnd);
+  
 
   return (
     <>

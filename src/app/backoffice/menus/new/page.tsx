@@ -11,8 +11,7 @@ export default async function NewMenuPage() {
   });
 
   const addOnCategories = await getCompanyAddonCategories();
-  // console.log(menuCategories);
-  console.log(addOnCategories);
+  
 
   return <NewFormData menuCategories={menuCategories} addOnCategories={addOnCategories}/>
 }

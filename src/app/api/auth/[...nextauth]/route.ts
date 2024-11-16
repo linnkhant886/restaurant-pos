@@ -9,7 +9,7 @@ interface Props {
   user: User | AdapterUser;
 }
 
-export const authOptions = {
+const authOptions = {
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
@@ -24,17 +24,14 @@ export const authOptions = {
   callbacks: {
     async signIn({ user }: Props) {
       const { email } = user;
-      // console.log(user);
       const dbuser = await prisma.users.findFirst({
         where: {
           email: email as string,
         },
-      })
-      if(!dbuser) {
-        await CreateDefaultData(user)
-      }else{
-        console.log("exit user")
-      }
+      });
+      if (!dbuser) {
+        await CreateDefaultData(user);
+      } 
       return true;
     },
   },

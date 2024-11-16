@@ -16,7 +16,6 @@ export default async function SingleMenu({ params }: prop) {
   const { id } = params;
 
   const menu = await getMenu(Number(id));
-  // console.log(menu)
   const selected = menu?.menuCategoriesMenus.map((item) => item.menuCategoryId);
   const menuCategories = await prisma.menuCategories.findMany({
     where: { companyId: await getCompanyId() },
@@ -24,12 +23,10 @@ export default async function SingleMenu({ params }: prop) {
 
   const addonCategory = await getCompanyAddonCategories();
   const addOn = await getCompanyAddon();
-  console.log(addonCategory);
 
   const selectedAddon = menu?.menuAddonCategories.map(
     (item) => item.addonCategoryId 
   ) as number[];
-  console.log(selectedAddon);
 
   const isAvailable = menu?.DisabledLocationsMenus.find(
     (item) => item.menuId === Number(id)

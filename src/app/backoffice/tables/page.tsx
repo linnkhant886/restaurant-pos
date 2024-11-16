@@ -7,7 +7,6 @@ import {  getSelectedLocationTables } from "@/libs/action";
 
 export default async function MenusPage() {
   const tables = await getSelectedLocationTables();
-  // return console.log(tables)
   return (
     <>
       <Box

@@ -12,7 +12,6 @@ export type OrderWithOrdersAddons = Prisma.OrdersGetPayload<{
 }>;
 
 export default async function MenuDetailPage({ params, searchParams }: Props) {
-  // console.log(params, searchParams);
   const tableId = Number(searchParams.tableId);
   const orderId = Number(searchParams.orderId);
   const menu = await prisma.menus.findFirst({

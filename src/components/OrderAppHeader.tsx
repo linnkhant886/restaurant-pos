@@ -10,10 +10,7 @@ interface Props {
 }
 
 export default  function OrderAppHeader({ company, cartOrders, tableId }: Props) {
-//   const orders = await prisma.orders.findMany({
-//     where: { tableId: Number(tableId), status: "CART" },
-//   });
-//   console.log(orders)
+
   return (
     <AppBar position="sticky" sx={{ display: "flex" }}>
       <Toolbar sx={{ display: "flex", mx: 4 }}>

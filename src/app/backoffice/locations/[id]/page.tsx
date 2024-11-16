@@ -20,16 +20,13 @@ export default async function UpdateMenuCategory({ params }: prop) {
       .map((item) => item)
       .find((item) => item.id == Number(id)) || null; // Number(id);
 
-  // console.log(location);
+ 
 
 
   const selectedLocation = await getSelectedLocation();
-  // console.log(selectedLocation)
   const companyLocation = await getLocation();
-  // console.log(companyLocation)
 
   const isSelected = selectedLocation?.locationId === Number(id)
-  // console.log(isSelected)
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box component={"form"} action={UpdateLocation}>

@@ -1,16 +1,16 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
-import { Menu } from "@/pages/backoffice/menus";
 import Link from "next/link";
+import { Menus } from "@prisma/client";
+import Image from 'next/image';
 
 interface Props {
-  menu: Menu;
+  menu: Menus;
   isAvailable: boolean;
 }
 
 export default async function MenuCard({ menu, isAvailable }: Props) {
   const { id, name, price } = menu;
-  // console.log(menu);
 
   const image = menu.imageUrl
     ? menu.imageUrl
@@ -29,11 +29,11 @@ export default async function MenuCard({ menu, isAvailable }: Props) {
           mr: 2,
         }}
       >
-        <img
+        <Image
           src={image}
           alt="Menu Item"
-          width="300"
-          height="120"
+          width={300}
+          height={120}
           style={{
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,

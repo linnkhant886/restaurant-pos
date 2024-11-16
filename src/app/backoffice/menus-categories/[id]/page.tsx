@@ -17,7 +17,6 @@ export default async function UpdateMenuCategory({ params }: prop) {
     where: { id: Number(id) },
     include: { DisabledLocationsMenuCategories: true },
   });
-  console.log(MenuCategory);
 
   const isAvailable =
     MenuCategory?.DisabledLocationsMenuCategories.length === 0 ? true : false;

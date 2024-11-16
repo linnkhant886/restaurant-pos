@@ -7,7 +7,6 @@ import { getCompanyAddon } from "@/libs/action";
 
 export default async function MenusPage() {
   const Addons = await getCompanyAddon()
-  // console.log(Addons)
   return (
     <>
       <Box

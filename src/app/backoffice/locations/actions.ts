@@ -8,7 +8,6 @@ export async function createLocation(formData: FormData) {
   const selectedLocation = await getSelectedLocation();
   const locationName = formData.get("createLocation") as string;
   const companyId = formData.get("companyId");
-  // return console.log(formData)
   const location = await prisma.locations.create({
     data: {
       name: locationName,
@@ -16,24 +15,17 @@ export async function createLocation(formData: FormData) {
     },
   });
 
-  // await prisma.selectedLocation.create({
-  //   data: {
-  //     userId: selectedLocation?.userId as number,
-  //     locationId: location.id,
-  //   },
-  // });
+  
   redirect("/backoffice/locations");
 }
 
 export async function UpdateLocation(formData: FormData) {
-  //   return console.log(formData);
   const selectedLocation = await getSelectedLocation();
   const id = formData.get("id");
   const locationName = formData.get("locationName") as string;
   const isSelected = formData.get("isSelected") ? true : false;
   const companyLocation = await getLocation();
 
-  // return console.log(formData, isSelected);
   await prisma.locations.update({
     where: {
       id: Number(id),
@@ -54,7 +46,6 @@ export async function UpdateLocation(formData: FormData) {
       },
     });
   } else {
-    console.log("not selected");
     await prisma.selectedLocation.update({
       data: {
         userId: selectedLocation?.userId,
@@ -70,7 +61,6 @@ export async function UpdateLocation(formData: FormData) {
 }
 
 export async function DeleteLocation(formData: FormData) {
-  //   return console.log(formData)
   const locationId = formData.get("DeleteID");
   await prisma.locations.delete({
     where: {

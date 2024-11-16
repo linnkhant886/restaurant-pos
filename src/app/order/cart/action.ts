@@ -14,7 +14,6 @@ interface CartItem {
 
 export async function createCartOrder(payload: CartItem) {
   const { menuId, quantity, addonIds, tableId, orderId } = payload;
-  // console.log("tableId", tableId);
   let order: Orders;
   if (orderId) {
     const orderAddons = await prisma.ordersAddons.findMany({

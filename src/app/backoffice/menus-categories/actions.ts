@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 
 export async function CreateMenuCategory(formData: any) {
   const MenuCategory = formData.get("createMenuCategory");
-  // console.log(formData)
   await prisma.menuCategories.create({
     data: {
       name: MenuCategory,
@@ -21,7 +20,6 @@ export async function UpdateMenuCategoryID(formData: FormData) {
   const MenuCategoryName = formData.get("MenuCategoryName") as string;
   const isAvailable = formData.get("isAvailable") ? true : false;
 
-  // return console.log(formData);
   await prisma.menuCategories.update({
     where: {
       id: Number(MenuCategoryId),
@@ -58,7 +56,6 @@ export async function UpdateMenuCategoryID(formData: FormData) {
 }
 
 export async function DeleteMenuCategoryID(formData: any) {
-  // console.log(formData)
   const MenuCategoryId = formData.get("DeleteID");
   await prisma.menuCategories.delete({
     where: {

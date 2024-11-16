@@ -35,7 +35,6 @@ export default async function OrderPage({ params }: Props) {
         OrdersAddons: true,
       },
     });
-  // console.log(orders);
   return (
     <>
       <div className="p-6 max-w-md mx-auto">

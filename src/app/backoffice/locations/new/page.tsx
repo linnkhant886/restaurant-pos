@@ -4,7 +4,6 @@ import { getCompanyId } from "@/libs/action";
 
 export default async function NewMenuPage() {
   const companyId = await getCompanyId();
-  // console.log(companyId);
   return (
     <>
       <h1>New Locations Page</h1>

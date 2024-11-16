@@ -39,7 +39,6 @@ export default function UpdateMenuFormData({
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  // console.log(menu);
 
   const handleUpdateMenu = async (formData: FormData) => {
     try {

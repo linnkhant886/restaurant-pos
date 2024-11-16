@@ -8,7 +8,6 @@ export async function CreateAddon(formData: FormData) {
   const price = formData.get("price") ;
   const isAvailable = formData.get("isAvailable") ? true : false;
   const addonCategoryId = formData.getAll("addonCategoryId")
-  // return console.log(formData)
   const Addon = await prisma.addons.create({
     data: {
       name: name,
@@ -37,7 +36,6 @@ export async function UpdateAddon(formData: FormData) {
   const isAvailable = formData.get("isAvailable") ? true : false;
   const addonCategoryId = formData.getAll("addonCategoryId")
   
-  // return console.log(formData);
   await prisma.addons.update({
     where: {
       id: Number(id),
@@ -55,7 +53,6 @@ export async function UpdateAddon(formData: FormData) {
 
 export async function DeleteAddon(formData: FormData) {
   const id = Number(formData.get("DeleteID"));
-  // return console.log(formData);
   
   await prisma.addons.delete({
     where: {

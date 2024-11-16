@@ -13,7 +13,7 @@ interface Props {
   company: Company;
   menu: Menus[];
   tableId: string;
-  cartOrders:Orders[]
+  cartOrders: Orders[];
 }
 
 const theme = createTheme({
@@ -38,13 +38,12 @@ export default function RestaurantMenuMUI({
   company,
   menu,
   tableId,
-  cartOrders
+  cartOrders,
 }: Props) {
   const [showMenu, setShowMenu] = useState<Menus[]>([]);
   const [activeCategory, setActiveCategory] = useState<number>(0);
   const [selectedMenuCategory, setSelectedMenuCategory] =
     useState<MenuCategoryType>(menuCategories[0]);
-  // console.log(menuCategories)
 
   useEffect(() => {
     const menuIds = selectedMenuCategory.menuCategoriesMenus.map(
@@ -53,11 +52,14 @@ export default function RestaurantMenuMUI({
     const menutoShow = menu.filter((item) => menuIds.includes(item.id));
     setShowMenu(menutoShow);
   }, [selectedMenuCategory]);
-  // console.log(showMenu);
 
   return (
     <ThemeProvider theme={theme}>
-      <OrderAppHeader company={company} cartOrders={cartOrders} tableId={tableId} />
+      <OrderAppHeader
+        company={company}
+        cartOrders={cartOrders}
+        tableId={tableId}
+      />
 
       <Container maxWidth="md" sx={{ mt: 4 }}>
         <Tabs

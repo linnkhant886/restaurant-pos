@@ -7,7 +7,6 @@ export async function CreateAddonCategory(formData: FormData) {
   const name = formData.get("name") as string;
   const isRequired = formData.get("isRequired") ? true : false;
   const menus = formData.getAll("menus");
-  // return console.log(formData)
   const AddonCategory = await prisma.addonCategories.create({
     data: {
       name: name,
@@ -40,7 +39,6 @@ export async function UpdateAddonCategory(formData: FormData) {
   const isRequired = formData.get("isRequired") ? true : false;
   const Updatemenus = formData.getAll("menus").map((menu) => Number(menu));
   
-  // console.log(formData);
   await prisma.addonCategories.update({
     where: {
       id: Number(id),
@@ -60,9 +58,7 @@ export async function UpdateAddonCategory(formData: FormData) {
   const menuAddonCategoriesIds = menuAddonCategories.map(
     (item) => item.menuId
   );
-  // console.log(menuAddonCategories);
-
-  // console.log(menuAddonCategoriesIds);
+  
 
   const isSame =
   Updatemenus.length === menuAddonCategoriesIds.length &&
@@ -82,7 +78,6 @@ export async function UpdateAddonCategory(formData: FormData) {
       addonCategoryId: Number(id),
     }));
 
-    // console.log(data);
     await prisma.menuAddonCategories.createMany({
       data,
     });
@@ -91,14 +86,9 @@ export async function UpdateAddonCategory(formData: FormData) {
   redirect("/backoffice/addon-categories");  
 }
 
-// if (!isSame) {
-//     console.log("not same");
-//   }else{
-//     console.log("same")
-//   }
+
 export async function DeleteAddonCategory(formData: FormData) {
   const id = Number(formData.get("DeleteID"));
-  // return console.log(formData);
   await prisma.menuAddonCategories.deleteMany({
     where: {
       addonCategoryId: Number(id),

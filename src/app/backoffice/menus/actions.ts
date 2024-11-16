@@ -31,7 +31,6 @@ const updateMenuValidator = FormSchema.omit({
   addOnCategoryIds: true,
 });
 export async function CreateMenu(formData: FormData) {
-  // return console.log(formData);
   try {
     const { name, price, menuCategoryIds, imageUrl } =
       createMenuValidator.parse({
@@ -85,7 +84,6 @@ export async function getMenu(id: number) {
 }
 
 export async function UpdateMenu(formData: FormData) {
-  // console.log(formData);
   try {
     const { id, name, price } = updateMenuValidator.parse({
       id: Number(formData.get("id")),
@@ -203,7 +201,6 @@ export async function UpdateMenu(formData: FormData) {
     }
   } catch (err) {
     if (err instanceof z.ZodError) {
-      console.log(err.errors);
       const errorMessages = err.errors.map((item) => item.message).join(",");
       return { error: errorMessages };
     }
@@ -213,7 +210,6 @@ export async function UpdateMenu(formData: FormData) {
 
 
 export async function DeleteMenu(formData: FormData) {
-  // console.log(formData);
   const id = Number(formData.get("id"));
   await prisma.menuCategoriesMenus.deleteMany({
     where: {

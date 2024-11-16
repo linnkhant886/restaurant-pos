@@ -9,7 +9,6 @@ import { Tables } from "@prisma/client";
 export async function CreateTable(formData: FormData) {
   const name = formData.get("name") as string;
   const locationId = formData.get("locationId") as string;
-  // return console.log(formData)
   const table = await prisma.tables.create({
     data: {
       name,
@@ -33,7 +32,6 @@ export async function CreateTable(formData: FormData) {
 export async function UpdateTable(formData: FormData) {
   const name = formData.get("name") as string;
   const tableId = formData.get("id");
-  // return console.log(formData)
   await prisma.tables.update({
     data: {
       name,

@@ -240,9 +240,7 @@ export async function getMenuCategoryByTableId(tableId: string) {
     (item) => !disabledMenuCategoriesIds.includes(item.id)
   );
 
-  // console.log(menuCategories)
-  // console.log(DisabledLocationsMenuCategories)
-  // console.log(availableMenuCategories);
+ 
 }
 
 export async function getMenuByTableId(menuCategoriesIds: number[]) {
