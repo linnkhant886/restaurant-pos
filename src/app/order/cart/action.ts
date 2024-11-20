@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { Orders, ORDERSTATUS } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/libs/prisma";
 
 interface CartItem {
   menuId: number;

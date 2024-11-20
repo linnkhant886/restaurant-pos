@@ -1,5 +1,6 @@
 import OrderCard from "@/components/OrderCard";
 import { getSelectedLocationTables } from "@/libs/action";
+import { prisma } from "@/libs/prisma";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { ORDERSTATUS, Prisma } from "@prisma/client";
 import Link from "next/link";

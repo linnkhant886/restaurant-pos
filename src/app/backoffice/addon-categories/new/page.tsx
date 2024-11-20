@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 
 import { CreateAddonCategory } from "../actions";
-import { prisma } from "@/libs/prisma";
 import { getCompanyMenu } from "@/libs/action";
 
 export default async function AddonCategories() {

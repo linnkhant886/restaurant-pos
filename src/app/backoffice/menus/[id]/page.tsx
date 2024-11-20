@@ -6,7 +6,6 @@ import {
   getCompanyId,
 } from "@/libs/action";
 import UpdateMenuFormData from "./updateMenuFormData";
-import { get } from "http";
 
 export interface prop {
   params: { id: string };

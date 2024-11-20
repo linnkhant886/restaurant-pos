@@ -1,5 +1,6 @@
 "use server";
 
+import { prisma } from "@/libs/prisma";
 import { ORDERSTATUS } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 

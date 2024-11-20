@@ -4,6 +4,7 @@ import {
   getMenuByTableId,
   getMenuCategoryByTableId,
 } from "@/libs/action";
+import { prisma } from "@/libs/prisma";
 import { Box } from "@mui/material";
 import { ORDERSTATUS, Prisma } from "@prisma/client";
 
