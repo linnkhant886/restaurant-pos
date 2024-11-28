@@ -53,7 +53,7 @@ export default function UpdateMenuFormData({
       }
       const response = await UpdateMenu(formData);
       if (response?.error) {
-        toast.error(response.error);
+        toast.error(response.error[0]);
       } else {
         toast.success("Update Success");
         router.push("/backoffice/menus");
