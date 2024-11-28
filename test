@@ -1,9 +1,0 @@
-NEXT_PUBLIC_BACKOFFICE_API_URL=http://localhost:3000/api/backoffice
-DATABASE_URL="postgresql://postgres:password@localhost:5432/foodie-pos?schema=public"
-GOOGLE_CLIENT_ID=725123933474-ui5hf24dob27n0k72cl6gp3906grinq3.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
-NEXTAUTH_SECRET=ZpPlDaXEDDEevWKhfFC91mB4HkQsSEYwxlbOS1IW6+0=
-BLOB_READ_WRITE_TOKEN="vercel_blob_rw_cKWJtvYEXIW8zknT_NLQ11wSolGItxgSg2Pbb9X82nxM1uy"
-NEXT_PUBLIC_ORDER_APP_URL=http://localhost:3000/order
-
-postgres://neondb_owner:uxGRQEYJ5g9F@ep-winter-sunset-a7xe2l96-pooler.ap-southeast-2.aws.neon.tech/neondb?sslmode=require
