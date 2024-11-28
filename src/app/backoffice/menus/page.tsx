@@ -1,45 +1,22 @@
-import MenuCard from "@/components/MenuCard";
+import MenuPagniation from "@/components/MenuPagniation";
 import {
-  getCompanyId,
   getCompanyMenu,
   getSelectedLocation,
 } from "@/libs/action";
-import { Box, Button } from "@mui/material";
-import Link from "next/link";
+import { Prisma } from "@prisma/client";
+
+export type MenuwithDisableLocation = Prisma.MenusGetPayload<{
+  include: { DisabledLocationsMenus: true };
+}>;
+
 
 export default async function MenusPage() {
   const selectedLocation = (await getSelectedLocation())?.locationId;
-  const menus = await getCompanyMenu();
-
+  const menus : MenuwithDisableLocation[] = await getCompanyMenu();
   
-
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <h1>Menus page</h1>
-        <Link href="/backoffice/menus/new">
-          <Button variant="contained">New menu</Button>
-        </Link>
-      </Box>
-      <Box sx={{ mt: 3, display: "flex"  , flexWrap: "wrap" , gap: 4}}>
-        {menus.map((menu) => {
-          const isAvailable = menu.DisabledLocationsMenus.find(
-            (item) =>
-              item.menuId === menu.id && item.locationId === selectedLocation
-          )
-            ? false
-            : true;
-
-          return (
-            <MenuCard key={menu.id} menu={menu} isAvailable={isAvailable} />
-          );
-        })}
-      </Box>
+      <MenuPagniation menus={menus} selectedLocation={selectedLocation} />
     </>
   );
 }

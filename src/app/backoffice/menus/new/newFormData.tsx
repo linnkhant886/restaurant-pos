@@ -39,7 +39,7 @@ export default function NewFormData({ menuCategories ,addOnCategories}: Props) {
       }
       const response = await CreateMenu(formData);
       if (response?.error) {
-        toast.error(response.error);
+        toast.error(response.error[0]);
       } else {
         toast.success("Success");
         router.push("/backoffice/menus");
@@ -78,18 +78,7 @@ export default function NewFormData({ menuCategories ,addOnCategories}: Props) {
           ))}
         </Box>
 
-        <Typography variant="h6">AddOn Category</Typography>
-        <Box sx={{ display: "flex", border: "1px solid black", p: 1, my: 2 }}>
-          {addOnCategories.map((addOnCategory) => (
-            <FormControlLabel
-              key={addOnCategory.id}
-              control={
-                <Checkbox name="addOnCategoryIds" value={addOnCategory.id} />
-              }
-              label={addOnCategory.name}
-            />
-          ))}
-        </Box>
+       
 
         <TextField sx={{ my: 2 }} type="file" name="file"></TextField>
         <FormControlLabel

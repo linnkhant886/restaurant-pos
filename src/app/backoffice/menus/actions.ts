@@ -23,7 +23,11 @@ const FormSchema = z.object({
     .min(1, { message: "Required addon category ids is missing" }),
 });
 
-const createMenuValidator = FormSchema.omit({ id: true, isAvailable: true });
+const createMenuValidator = FormSchema.omit({
+  id: true,
+  isAvailable: true,
+  addOnCategoryIds: true,
+});
 const updateMenuValidator = FormSchema.omit({
   isAvailable: true,
   imageUrl: true,
@@ -32,7 +36,7 @@ const updateMenuValidator = FormSchema.omit({
 });
 export async function CreateMenu(formData: FormData) {
   try {
-    const { name, price, menuCategoryIds, imageUrl } =
+      const { name, price, menuCategoryIds, imageUrl } =
       createMenuValidator.parse({
         name: formData.get("name"),
         price: Number(formData.get("price")),
@@ -62,7 +66,8 @@ export async function CreateMenu(formData: FormData) {
     });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      const errorMessages = err.errors.map((item) => item.message).join(",");
+      console.log(err);
+      const errorMessages = err.errors.map((item) => item.message);
       return { error: errorMessages };
     }
     return { error: "Something went wrong , please contact support" };
@@ -201,13 +206,12 @@ export async function UpdateMenu(formData: FormData) {
     }
   } catch (err) {
     if (err instanceof z.ZodError) {
-      const errorMessages = err.errors.map((item) => item.message).join(",");
+      const errorMessages = err.errors.map((item) => item.message);
       return { error: errorMessages };
     }
     return { error: "Something went wrong , please contact support" };
   }
 }
-
 
 export async function DeleteMenu(formData: FormData) {
   const id = Number(formData.get("id"));
@@ -221,7 +225,7 @@ export async function DeleteMenu(formData: FormData) {
     where: {
       menuId: Number(id),
     },
-  })
+  });
   await prisma.menus.delete({
     where: {
       id: Number(id),

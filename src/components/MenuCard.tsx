@@ -9,7 +9,7 @@ interface Props {
   isAvailable: boolean;
 }
 
-export default async function MenuCard({ menu, isAvailable }: Props) {
+export default  function MenuCard({ menu, isAvailable }: Props) {
   const { id, name, price } = menu;
 
   const image = menu.imageUrl

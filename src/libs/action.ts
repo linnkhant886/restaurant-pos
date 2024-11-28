@@ -12,7 +12,14 @@ export async function CreateDefaultData(nextUser: User) {
   const { name, email } = nextUser;
 
   const company = await prisma.company.create({
-    data: { name: "default Company" },
+    data: {
+      name: "default Company",
+      email: "default@gmail.com",
+      phoneNumber: 912345678,
+      streetAddress: "default address",
+      city: "default city",
+      state: "default state",
+    },
   });
 
   const user = await prisma.users.create({
@@ -142,6 +149,36 @@ export async function getCompanyMenu() {
   });
 }
 
+
+export async function getPaginatedCompanyMenu(page: number = 1, pageSize: number = 8) {
+  try {
+    // Calculate `skip` and `take` for pagination
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    // Fetch the total number of menus (optional, for returning total pages)
+    const totalMenus = await prisma.menus.count();
+
+    // Fetch paginated menus
+    const menus = await prisma.menus.findMany({
+      skip,
+      take,
+      include: {
+        menuCategoriesMenus: true, // Include relations if needed
+      },
+    });
+
+    return {
+      menus,
+      totalPages: Math.ceil(totalMenus / pageSize),
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated company menus:", error);
+    throw new Error("Failed to fetch paginated menus.");
+  }
+}
+
 export async function getCompanyAddonCategories() {
   const menu = await getCompanyMenu();
   const menuId = menu.map((item) => item.id);
@@ -239,12 +276,9 @@ export async function getMenuCategoryByTableId(tableId: string) {
   return menuCategories.filter(
     (item) => !disabledMenuCategoriesIds.includes(item.id)
   );
-
- 
 }
 
 export async function getMenuByTableId(menuCategoriesIds: number[]) {
-
   const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
     where: { menuCategoryId: { in: menuCategoriesIds } },
   });
@@ -260,9 +294,7 @@ export async function getMenuByTableId(menuCategoriesIds: number[]) {
 
   const availableMenu = menu.filter(
     (item) =>
-      !disabledLocationsMenu
-        .map((item) => item.menuId)
-        .includes(item.id)
-  )
+      !disabledLocationsMenu.map((item) => item.menuId).includes(item.id)
+  );
   return availableMenu;
 }
