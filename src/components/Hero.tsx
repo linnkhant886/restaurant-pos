@@ -22,7 +22,7 @@ const Hero = () => {
         unmountOnExit
         timeout={1000}
       >
-        <Box >
+        <Box>
           <Typography
             sx={{
               maxWidth: 700,
@@ -50,7 +50,6 @@ const Hero = () => {
             sx={{
               display: "flex",
               position: "relative",
-            
             }}
           >
             <Link href={`/order?tableId=1`}>
@@ -86,29 +85,35 @@ const Hero = () => {
         </Box>
       </Slide>
 
-     
-
-      <Box
-        sx={{
-          width: {
-            xs: 400,
-            md: 700,
-          },
-          height: {
-            xs: 400,
-            md: 700, // Height for medium screens
-          },
-          overflow: "hidden", // Ensures content stays within box dimensions
-        }}
+      <Slide
+        direction="up"
+        in={true}
+        mountOnEnter
+        unmountOnExit
+        timeout={1000}
       >
-        <Image
-          src="/heroVector.png"
-          alt="header-image"
-          layout="responsive" // Makes the image responsive within the container
-          width={500} // These are ratios; not exact dimensions
-          height={700}
-        />
-      </Box>
+        <Box
+          sx={{
+            width: {
+              xs: 400,
+              md: 700,
+            },
+            height: {
+              xs: 400,
+              md: 700, // Height for medium screens
+            },
+            overflow: "hidden", // Ensures content stays within box dimensions
+          }}
+        >
+          <Image
+            src="/heroVector.png"
+            alt="header-image"
+            layout="responsive" // Makes the image responsive within the container
+            width={500} // These are ratios; not exact dimensions
+            height={700}
+          />
+        </Box>
+      </Slide>
     </Box>
   );
 };
