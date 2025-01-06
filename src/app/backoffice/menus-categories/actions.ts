@@ -1,17 +1,36 @@
 "use server";
 
+import { z } from "zod";
 import { getCompanyId, getSelectedLocation } from "@/libs/action";
 import { prisma } from "@/libs/prisma";
 import { redirect } from "next/navigation";
 
-export async function CreateMenuCategory(formData: any) {
-  const MenuCategory = formData.get("createMenuCategory");
-  await prisma.menuCategories.create({
-    data: {
-      name: MenuCategory,
-      companyId: (await getCompanyId()) as number,
-    },
-  });
+
+ const FormSchema = z.object({
+  name: z
+    .string()
+    .min(4, { message: "Menu-Category name must be at least 4 characters long" }),
+});
+
+export async function CreateMenuCategory(formData: FormData) {
+  try {
+    const { name } = FormSchema.parse({
+      name: formData.get("createMenuCategory") as string,
+    });
+    const companyId = (await getCompanyId()) as number;
+    await prisma.menuCategories.create({
+      data: {
+        name: name,
+        companyId: companyId,
+      },
+    });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const errorMessages = err.errors.map((item) => item.message);
+      return { error: errorMessages };
+    }
+    return { error: "Something went wrong , please contact support" };
+  }
   redirect("/backoffice/menus-categories");
 }
 

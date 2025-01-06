@@ -7,6 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DeleteMenuCategoryID, UpdateMenuCategoryID } from "../actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export interface prop {
   params: { id: string };
@@ -29,12 +30,12 @@ export default async function UpdateMenuCategory({ params }: prop) {
         ></TextField>
 
         <FormControlLabel
-          sx={{ display: "block", mt: 2 }}
+          sx={{ display: "block", mt: 1 }}
           control={<Checkbox defaultChecked={isAvailable} />}
           label="Available"
           name="isAvailable"
         />
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 1}}>
           <Button type="submit" variant="contained">
             Update
           </Button>
@@ -47,10 +48,7 @@ export default async function UpdateMenuCategory({ params }: prop) {
       </Box>
 
       <Box component={"form"} action={DeleteMenuCategoryID}>
-        <Button type="submit" variant="contained" color="error">
-          {" "}
-          Delete
-        </Button>
+        <SubmitButton text="Delete" color="error"  variant="contained"/>
         <input type="hidden" defaultValue={MenuCategory?.id} name="DeleteID" />
       </Box>
     </Box>

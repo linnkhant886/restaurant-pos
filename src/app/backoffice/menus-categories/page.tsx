@@ -33,7 +33,7 @@ export default async function MenuCategoriesPage() {
           </Button>
         </Link>
       </Box>
-      <Box sx={{ mt: 3, display: "flex" }}>
+      <Box sx={{ mt: 3, display: "flex" , flexWrap: "wrap" }}>
         {menuCategories.map((menuCategory) => {
           const isAvailable = menuCategory.DisabledLocationsMenuCategories.find(
             (item) =>

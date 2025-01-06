@@ -14,7 +14,7 @@ export async function CreateDefaultData(nextUser: User) {
   const company = await prisma.company.create({
     data: {
       name: "default Company",
-      email: "default@gmail.com",
+      email: email || `default-${Date.now()}@example.com`,
       phoneNumber: 912345678,
       streetAddress: "default address",
       city: "default city",
