@@ -18,11 +18,12 @@ export default async function MenuCategoriesPage() {
           <Button
             variant="contained"
             sx={{
-              bgcolor: "#1D3557",
-              "&:hover": { bgcolor: "#2d4466" },
+              bgcolor: "primary.main",
+              color: "primary.contrastText",
+              ":hover": { bgcolor: "primary.main" },
             }}
           >
-            Add More Locations
+            Add  Locations
           </Button>
         </Link>
       </Box>

@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { Box } from "@mui/material";
 import { Topbar } from "@/components/Topbar";
@@ -10,6 +11,7 @@ interface Props {
 
 export default function BackofficeLayout({ children }: Props) {
   return (
+    
     <Box>
       <Topbar />
       <Box sx={{ display: "flex" }}>
@@ -17,7 +19,6 @@ export default function BackofficeLayout({ children }: Props) {
         <Box sx={{ p: 2, width: "100%" }}>{children}</Box>
       </Box>
       <Toaster position="top-right" />
-
     </Box>
   );
 }

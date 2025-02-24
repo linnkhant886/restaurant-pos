@@ -25,8 +25,9 @@ export default async function MenuCategoriesPage() {
           <Button
             variant="contained"
             sx={{
-              bgcolor: "#1D3557",
-              "&:hover": { bgcolor: "#2d4466" },
+              bgcolor: "#FFCA40",
+              color: "#000000",
+              ":hover": { bgcolor: "#FFCA40" },
             }}
           >
             New menu category

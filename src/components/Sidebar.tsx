@@ -1,3 +1,4 @@
+"use client";
 import CategoryIcon from "@mui/icons-material/Category";
 import ClassIcon from "@mui/icons-material/Class";
 import EggIcon from "@mui/icons-material/Egg";
@@ -15,13 +16,14 @@ import {
   ListItemText,
 } from "@mui/material";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const sidebarItems = [
   {
     id: 1,
     label: "Orders",
     icon: <LocalMallIcon />,
-    route: "/backoffice",
+    route: "/backoffice/",
   },
   {
     id: 2,
@@ -68,36 +70,60 @@ const sidebarItems = [
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <Box
       sx={{
         height: "100vh",
         width: 280,
-        backgroundColor: "#1D3557",
+        backgroundColor: "#F8F8F7",
+        borderRight: "1px solid #DDE6ED",
+        px: 1,
       }}
     >
-      <List sx={{ pt: 0 }}>
-        {sidebarItems.map((item) => (
-          <Link
-            key={item.id}
-            href={item.route}
-            style={{ textDecoration: "none", cursor: "pointer" }}
-          >
-            <ListItem
-              disablePadding
+      <List sx={{ mt: 1 }}>
+        {sidebarItems.map((item) => {
+          const isActive =
+            pathname === item.route || // Exact match for the main route
+            (item.route === "/backoffice/" &&
+              pathname.startsWith("/backoffice/orders"));
+
+          return (
+            <Box
+              key={item.id}
+              component={Link} // Use the `component` prop to render the `<Link>`
+              href={item.route}
               sx={{
-                ":hover": { backgroundColor: "#457B9D" },
+                textDecoration: "none",
+                cursor: "pointer",
+                color: "#000000",
               }}
             >
-              <ListItemButton>
-                <ListItemIcon sx={{ color: "#E8F6EF" }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.label} sx={{ color: "#E8F6EF" }} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        ))}
+              <ListItem
+                disablePadding
+                sx={{
+                  backgroundColor: isActive ? "#FFCA40" : "transparent",
+                  ":hover": {
+                    backgroundColor: "#FFCA40",
+                  },
+                  borderRadius: "6px",
+                  mt: 1,
+                }}
+              >
+                <ListItemButton>
+                  <ListItemIcon sx={{ color: "#000000" }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.label}
+                    sx={{ color: "#000000" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Box>
+          );
+        })}
       </List>
     </Box>
   );

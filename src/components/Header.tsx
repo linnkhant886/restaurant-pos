@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AppBar,
@@ -11,29 +11,51 @@ import {
   List,
   ListItemText,
   ListItemButton,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
-import { Link } from "react-scroll";
-import Image from "next/image";
+} from "@mui/material"
+import MenuIcon from "@mui/icons-material/Menu"
+import CloseIcon from "@mui/icons-material/Close"
+import { useState } from "react"
+import { Link } from "react-scroll"
+
+const navigationLinks = [
+  { title: "Home", to: "hero" },
+  { title: "Testimonial", to: "testimonials" },
+  { title: "Feature", to: "features" },
+  { title: "Contact", to: "contact" },
+]
 
 const Header = () => {
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
 
   const toggleDrawer = (open: boolean) => () => {
-    setDrawerOpen(open);
-  };
+    setDrawerOpen(open)
+  }
+
   return (
     <>
-      <AppBar position="fixed" sx={{ bgcolor: "primary.main" }}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          bgcolor: "#FFCA40",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          borderBottom: "2px solid #FFB200",
+        }}
+      >
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            color: "#000000",
+          }}
+        >
           <Typography
             component="div"
             sx={{
               fontWeight: "bold",
               fontSize: "30px",
               marginLeft: { xs: 0, md: 14 },
+              fontFamily: "'Pacifico', cursive",
+              textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
             }}
             style={{ cursor: "pointer" }}
           >
@@ -46,55 +68,33 @@ const Header = () => {
             </IconButton>
           </Box>
 
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <Button color="inherit" sx={{ marginX: 1 }}>
-              <Link
-                activeClass="active"
-                to="hero"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              gap: "1rem",
+              alignItems: "center",
+            }}
+          >
+            {navigationLinks.map((link) => (
+              <Button
+                key={link.to}
+                sx={{
+                  color: "#000000",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    transform: "translateY(-2px)",
+                    transition: "all 0.3s ease",
+                  },
+                }}
               >
-                Demo
-              </Link>
-            </Button>
-            <Button color="inherit" sx={{ marginX: 1 }}>
-              <Link
-                activeClass="active"
-                to="testimonials"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                Testimonial
-              </Link>
-            </Button>
-            <Button color="inherit" sx={{ marginX: 1 }}>
-              <Link
-                activeClass="active"
-                to="features"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                Feature
-              </Link>
-            </Button>
-            <Button color="inherit" sx={{ marginX: 1 }}>
-              <Link
-                activeClass="active"
-                to="contact"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                Contact
-              </Link>
-            </Button>
+                <Link activeClass="active" to={link.to} spy={true} smooth={true} offset={-70} duration={500}>
+                  <Typography sx={{ fontSize: "20px" }}>{link.title}</Typography>
+                </Link>
+              </Button>
+            ))}
           </Box>
         </Toolbar>
       </AppBar>
@@ -107,23 +107,27 @@ const Header = () => {
           sx: {
             height: "60%",
             maxHeight: "200px",
+            backgroundColor: "#FFCA40",
+            color: "#000000",
           },
         }}
         onClose={toggleDrawer(false)}
       >
         <List sx={{ width: 250 }}>
-          <ListItemButton component="a" href="#testimonial">
-            <ListItemText primary="Testimonials" />
-          </ListItemButton>
-          <ListItemButton component="a" href="#demo">
-            <ListItemText primary="Demo" />
-          </ListItemButton>
-          <ListItemButton component="a" href="#feature">
-            <ListItemText primary="Feature" />
-          </ListItemButton>
-          <ListItemButton component="a" href="#contact">
-            <ListItemText primary="Contact" />
-          </ListItemButton>
+          {navigationLinks.map((link) => (
+            <ListItemButton
+              key={link.to}
+              component={Link}
+              to={link.to}
+              spy={true}
+              smooth={true}
+              offset={-70}
+              duration={500}
+              onClick={toggleDrawer(false)}
+            >
+              <ListItemText primary={link.title} />
+            </ListItemButton>
+          ))}
         </List>
 
         <IconButton
@@ -131,24 +135,16 @@ const Header = () => {
             position: "absolute",
             top: 10,
             right: 15,
-            ":hover": { backgroundColor: "grey.50" },
+            ":hover": { backgroundColor: "rgba(0,0,0,0.1)" },
           }}
           onClick={toggleDrawer(false)}
         >
           <CloseIcon />
         </IconButton>
       </Drawer>
-      <Box
-        sx={{
-          position: "absolute",
-          right: 0,
-          display: { xs: "none", md: "block" },
-        }}
-      >
-        
-      </Box>
     </>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
+

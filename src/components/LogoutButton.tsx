@@ -1,13 +1,15 @@
 "use client";
 
+import { IconButton } from "@mui/material";
 import { signOut } from "next-auth/react";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export default function Topbar() {
   return (
     <div>
-      <h2 style={{ cursor: "pointer" }} onClick={() => signOut()}>
-        Logout
-      </h2>
+      <IconButton onClick={() => signOut()} size="large" color="inherit" sx={{ ml: 1 }}>
+        <ExitToAppIcon />
+      </IconButton>
     </div>
   );
 }

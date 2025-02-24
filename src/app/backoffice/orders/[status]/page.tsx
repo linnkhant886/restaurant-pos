@@ -45,7 +45,7 @@ export default async function OrderPage({ params }: Props) {
               variant={
                 status === ORDERSTATUS.PENDING ? "contained" : "outlined"
               }
-              color="primary"
+              color="warning"
             >
               PENDING
             </Button>
@@ -55,7 +55,7 @@ export default async function OrderPage({ params }: Props) {
               variant={
                 status === ORDERSTATUS.COOKING ? "contained" : "outlined"
               }
-              color="secondary"
+              color="info"
             >
               COOKING
             </Button>
@@ -79,16 +79,18 @@ export default async function OrderPage({ params }: Props) {
       <Box sx={{ display: "grid ", gridTemplateColumns: "repeat(4, 1fr)" }}>
         {orders.map(async (order) => {
           const addonIds = order.OrdersAddons.map((addon) => addon.addonId);
-          const addons: AddonWithAddonCategory[] = await prisma.addons.findMany({
-            where: {
-              id: {
-                in: addonIds,
+          const addons: AddonWithAddonCategory[] = await prisma.addons.findMany(
+            {
+              where: {
+                id: {
+                  in: addonIds,
+                },
               },
-            },
-            include: {
-              addonCategory: true,
+              include: {
+                addonCategory: true,
+              },
             }
-          });
+          );
           return <OrderCard key={order.id} order={order} addons={addons} />;
         })}
       </Box>

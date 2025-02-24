@@ -9,7 +9,7 @@ interface Props {
   user: User | AdapterUser;
 }
 
-const authOptions = {
+export const authOptions = {
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
