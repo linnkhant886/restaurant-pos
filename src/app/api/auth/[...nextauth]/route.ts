@@ -9,7 +9,7 @@ interface Props {
   user: User | AdapterUser;
 }
 
-export const authOptions = {
+const authOptions = {
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
@@ -31,7 +31,7 @@ export const authOptions = {
       });
       if (!dbuser) {
         await CreateDefaultData(user);
-      } 
+      }
       return true;
     },
   },
