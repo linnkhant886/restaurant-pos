@@ -61,7 +61,7 @@ const MenuCard: React.FC<Props> = ({ items, href }) => {
                   component="div"
                   sx={{ fontWeight: "bold" }}
                 >
-                  ${item.price!.toFixed(2)}
+                  ${item.price!.toFixed(0)}
                 </Typography>
                 <Button
                   variant="contained"
@@ -71,9 +71,12 @@ const MenuCard: React.FC<Props> = ({ items, href }) => {
                     "&:hover": {
                       bgcolor: "#ffcc00",
                     },
+                    padding: { xs: "6px 12px", sm: "8px 16px" }, // Smaller padding on mobile
+                    fontSize: { xs: "0.8rem", sm: "1rem" }, // Adjust font size for mobile
+                    minWidth: { xs: "100px", sm: "120px" }, // Ensure button remains clickable
                   }}
                 >
-                  Order now
+                  Order Now
                 </Button>
               </Box>
             </StyledCardContent>

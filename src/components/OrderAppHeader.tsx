@@ -12,7 +12,7 @@ interface Props {
 export default  function OrderAppHeader({ company, cartOrders, tableId }: Props) {
 
   return (
-    <AppBar position="sticky" sx={{ display: "flex" }}>
+    <AppBar position="sticky" sx={{ display: "flex" , bgcolor: "#FFCA40", color: "#000000"}}>
       <Toolbar sx={{ display: "flex", mx: 4 }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {company.name}
@@ -25,10 +25,10 @@ export default  function OrderAppHeader({ company, cartOrders, tableId }: Props)
             padding: "8px 16px",
             display: "flex",
             alignItems: "center",
-            bgcolor: "#1976d2",
-            color: "white",
+            bgcolor: "#000000",
+            color: "#FFCA40",
             borderRadius: "8px",
-            "&:hover": { bgcolor: "#1565c0" },
+            "&:hover": { bgcolor: "#000000" },
           }}
         >
           <ShoppingCartCheckoutIcon sx={{ mr: 1 }} />

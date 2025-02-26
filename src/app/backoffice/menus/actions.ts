@@ -2,6 +2,7 @@
 
 import { getSelectedLocation } from "@/libs/action";
 import { prisma } from "@/libs/prisma";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -231,5 +232,6 @@ export async function DeleteMenu(formData: FormData) {
       id: Number(id),
     },
   });
+  revalidatePath("/backoffice/menus");
   redirect("/backoffice/menus");
 }
