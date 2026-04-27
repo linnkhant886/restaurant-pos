@@ -1,7 +1,7 @@
 "use server";
 
-import { getSelectedLocation } from "@/libs/action";
-import { prisma } from "@/libs/prisma";
+import { getSelectedLocation } from "@/lib/actions/action";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -182,29 +182,33 @@ export async function UpdateMenu(formData: FormData) {
       await prisma.menuAddonCategories.createMany({ data });
     }
 
+    const locationId = (await getSelectedLocation())?.locationId as number;
+
     if (!isAvailable) {
-      await prisma.disabledLocationsMenus.create({
-        data: {
-          locationId: (await getSelectedLocation())?.locationId as number,
+      const existing = await prisma.disabledLocationsMenus.findFirst({
+        where: {
           menuId: Number(id),
+          locationId: locationId,
         },
       });
-    } else {
-      const disabledLocationsMenus =
-        await prisma.disabledLocationsMenus.findFirst({
-          where: {
+
+      if (!existing) {
+        await prisma.disabledLocationsMenus.create({
+          data: {
+            locationId: locationId,
             menuId: Number(id),
           },
         });
-
-      if (disabledLocationsMenus) {
-        await prisma.disabledLocationsMenus.delete({
-          where: {
-            id: disabledLocationsMenus?.id,
-          },
-        });
       }
+    } else {
+      await prisma.disabledLocationsMenus.deleteMany({
+        where: {
+          menuId: Number(id),
+          locationId: locationId,
+        },
+      });
     }
+    return { success: true };
   } catch (err) {
     if (err instanceof z.ZodError) {
       const errorMessages = err.errors.map((item) => item.message);
@@ -216,22 +220,34 @@ export async function UpdateMenu(formData: FormData) {
 
 export async function DeleteMenu(formData: FormData) {
   const id = Number(formData.get("id"));
-  await prisma.menuCategoriesMenus.deleteMany({
-    where: {
-      menuId: Number(id),
-    },
-  });
+  try {
+    await prisma.menuCategoriesMenus.deleteMany({
+      where: {
+        menuId: Number(id),
+      },
+    });
 
-  await prisma.menuAddonCategories.deleteMany({
-    where: {
-      menuId: Number(id),
-    },
-  });
-  await prisma.menus.delete({
-    where: {
-      id: Number(id),
-    },
-  });
-  revalidatePath("/backoffice/menus");
-  redirect("/backoffice/menus");
+    await prisma.menuAddonCategories.deleteMany({
+      where: {
+        menuId: Number(id),
+      },
+    });
+    
+    await prisma.disabledLocationsMenus.deleteMany({
+      where: {
+        menuId: Number(id),
+      },
+    });
+
+    await prisma.menus.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+    revalidatePath("/backoffice/menus");
+    return { success: true };
+  } catch (err) {
+    return { error: "Something went wrong, please contact support" };
+  }
 }
+

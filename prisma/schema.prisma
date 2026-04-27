@@ -82,10 +82,10 @@ model Addons {
 model Company {
   id             Int              @id @default(autoincrement())
   name           String
-  streetAddress  String?         
-  city           String?          
-  state          String?          
-  phoneNumber    Int?          
+  streetAddress  String?
+  city           String?
+  state          String?
+  phoneNumber    Int?
   email          String?          @unique
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -94,7 +94,6 @@ model Company {
   menucategories MenuCategories[]
   users          Users[]
 }
-
 
 model Users {
   id               Int                @id @default(autoincrement())

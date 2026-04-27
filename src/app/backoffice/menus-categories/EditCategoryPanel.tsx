@@ -1,0 +1,229 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { UpdateMenuCategoryID, DeleteMenuCategoryID } from "./actions";
+import toast from "react-hot-toast";
+import { Loader2, X, Layers } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+interface Category {
+  id: number;
+  name: string;
+  isAvailable: boolean;
+  colorBg: string;
+  colorFg: string;
+}
+
+interface Props {
+  category: Category | null;
+  onClose: () => void;
+}
+
+export function EditCategoryPanel({ category, onClose }: Props) {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [available, setAvailable] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Sync state when category changes
+  useEffect(() => {
+    if (category) {
+      setName(category.name);
+      setAvailable(category.isAvailable);
+    }
+  }, [category?.id]);
+
+  const isOpen = !!category;
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!category) return;
+    setSaving(true);
+    const fd = new FormData();
+    fd.set("MenuCategoryId", String(category.id));
+    fd.set("MenuCategoryName", name);
+    if (available) fd.set("isAvailable", "on");
+    
+    try {
+      const res = await UpdateMenuCategoryID(fd);
+      if (res?.error) {
+        const msg = Array.isArray(res.error) ? res.error[0] : res.error;
+        toast.error(msg);
+      } else {
+        toast.success("Category updated!");
+        onClose();
+        router.refresh();
+      }
+    } catch {
+      toast.error("Something went wrong.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!category) return;
+    setDeleting(true);
+    const fd = new FormData();
+    fd.set("DeleteID", String(category.id));
+    try {
+      const res = await DeleteMenuCategoryID(fd);
+      if (res?.error) {
+        const msg = Array.isArray(res.error) ? res.error[0] : res.error;
+        toast.error(msg);
+        setDeleting(false);
+      } else {
+        toast.success("Category deleted.");
+        onClose();
+        router.refresh();
+      }
+    } catch {
+      toast.error("Something went wrong.");
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-40 transition-opacity duration-300"
+        style={{
+          backgroundColor: "rgba(27,31,59,0.25)",
+          opacity: isOpen ? 1 : 0,
+          pointerEvents: isOpen ? "auto" : "none",
+        }}
+        onClick={onClose}
+      />
+
+      {/* Panel */}
+      <div
+        className="fixed top-0 right-0 h-full z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
+        style={{
+          width: 380,
+          backgroundColor: "var(--rf-paper)",
+          transform: isOpen ? "translateX(0)" : "translateX(100%)",
+        }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-6 py-4 border-b"
+          style={{ borderColor: "var(--rf-line)" }}
+        >
+          <p
+            className="text-[10px] font-semibold uppercase tracking-widest"
+            style={{ color: "rgba(27,31,59,0.4)" }}
+          >
+            Edit Category
+          </p>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-black/6 transition-colors"
+            style={{ color: "rgba(27,31,59,0.45)" }}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-y-auto">
+          <div className="px-6 py-5 space-y-5 flex-1">
+            {/* Icon preview */}
+            {category && (
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                style={{ backgroundColor: category.colorBg }}
+              >
+                <Layers className="h-6 w-6" style={{ color: category.colorFg }} />
+              </div>
+            )}
+
+            {/* Name */}
+            <div>
+              <label
+                className="block text-sm font-medium mb-1.5"
+                style={{ color: "var(--rf-ink)" }}
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none transition-all"
+                style={{
+                  borderColor: "var(--rf-line)",
+                  backgroundColor: "var(--rf-cream)",
+                  color: "var(--rf-ink)",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "var(--rf-ink)")}
+                onBlur={(e) => (e.target.style.borderColor = "var(--rf-line)")}
+              />
+            </div>
+
+            {/* Divider */}
+            <hr style={{ borderColor: "var(--rf-line)" }} />
+
+            {/* Visible on POS toggle */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "var(--rf-ink)" }}>
+                  Visible on POS
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "rgba(27,31,59,0.45)" }}>
+                  Show in order entry and QR menu
+                </p>
+              </div>
+
+              {/* Toggle pill */}
+              <button
+                type="button"
+                onClick={() => setAvailable((v) => !v)}
+                className="relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none flex-shrink-0"
+                style={{
+                  backgroundColor: available ? "var(--rf-ink)" : "var(--rf-line-2)",
+                }}
+                role="switch"
+                aria-checked={available}
+              >
+                <span
+                  className="absolute top-0.5 w-5 h-5 rounded-full transition-all duration-200 shadow-sm"
+                  style={{
+                    backgroundColor: available ? "var(--rf-yellow)" : "white",
+                    left: available ? "calc(100% - 1.375rem)" : "0.125rem",
+                  }}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Footer actions */}
+          <div
+            className="px-6 py-4 border-t flex gap-3"
+            style={{ borderColor: "var(--rf-line)" }}
+          >
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+              style={{ backgroundColor: "#FEE2E2", color: "#991B1B" }}
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-[2] flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save changes"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
+}

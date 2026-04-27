@@ -1,7 +1,7 @@
 "use server";
 
-import { getLocation, getSelectedLocation } from "@/libs/action";
-import { prisma } from "@/libs/prisma";
+import { getLocation, getSelectedLocation } from "@/lib/actions/action";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export async function createLocation(formData: FormData) {
@@ -69,3 +69,4 @@ export async function DeleteLocation(formData: FormData) {
   });
   redirect("/backoffice/locations");
 }
+

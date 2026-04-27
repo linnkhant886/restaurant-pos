@@ -1,7 +1,7 @@
 
-import { getCompanyId } from "@/libs/action";
+import { getCompanyId } from "@/lib/actions/action";
 import UpdateCompany from "./updateCompany";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 
 export default async function Setting() {
     const companyId = await getCompanyId();
@@ -10,3 +10,4 @@ export default async function Setting() {
       <UpdateCompany company={company} />
   );
 }
+

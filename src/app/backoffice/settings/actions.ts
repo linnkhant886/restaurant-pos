@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -63,3 +63,4 @@ export async function updateCompanyData(formData: FormData) {
 
   revalidatePath("/backoffice/settings");
 }
+

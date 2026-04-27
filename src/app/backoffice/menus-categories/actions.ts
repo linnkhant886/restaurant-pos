@@ -1,8 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { getCompanyId, getSelectedLocation } from "@/libs/action";
-import { prisma } from "@/libs/prisma";
+import { getCompanyId, getSelectedLocation } from "@/lib/actions/action";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 
@@ -31,7 +31,6 @@ export async function CreateMenuCategory(formData: FormData) {
     }
     return { error: "Something went wrong , please contact support" };
   }
-  redirect("/backoffice/menus-categories");
 }
 
 const UpdateSchema = z.object({
@@ -59,30 +58,34 @@ export async function UpdateMenuCategoryID(formData: FormData) {
       },
     });
 
+    const locationId = (await getSelectedLocation())?.locationId as number;
+
     if (!isAvailable) {
-      await prisma.disabledLocationsMenuCategories.create({
-        data: {
+      // Use upsert or check existence to avoid duplicates
+      const existing = await prisma.disabledLocationsMenuCategories.findFirst({
+        where: {
           menuCategoryId: Number(MenuCategoryId),
-          locationId: (await getSelectedLocation())?.locationId as number,
+          locationId: locationId,
         },
       });
-    } else {
-      const disabledLocationsMenuCategories =
-        await prisma.disabledLocationsMenuCategories.findFirst({
-          where: {
-            menuCategoryId: Number(MenuCategoryId),
-          },
-        });
 
-      if (disabledLocationsMenuCategories) {
-        await prisma.disabledLocationsMenuCategories.delete({
-          where: {
-            id: disabledLocationsMenuCategories?.id,
+      if (!existing) {
+        await prisma.disabledLocationsMenuCategories.create({
+          data: {
+            menuCategoryId: Number(MenuCategoryId),
+            locationId: locationId,
           },
         });
       }
+    } else {
+      // Only delete the record for THIS specific location
+      await prisma.disabledLocationsMenuCategories.deleteMany({
+        where: {
+          menuCategoryId: Number(MenuCategoryId),
+          locationId: locationId,
+        },
+      });
     }
-    redirect("/backoffice/menus-categories");
   } catch (err) {
     if (err instanceof z.ZodError) {
       const errorMessages = err.errors.map((item) => item.message);
@@ -108,12 +111,14 @@ export async function DeleteMenuCategoryID(formData: FormData) {
         id: Number(DeleteID),
       },
     });
-    redirect("/backoffice/menus-categories");
+    return { success: true };
   } catch (err) {
     if (err instanceof z.ZodError) {
       const errorMessages = err.errors.map((item) => item.message);
       return { error: errorMessages };
     }
-    return { error: "Something went wrong, please contact support" };
+    return { 
+      error: "Could not delete category. Please make sure it has no menus inside it first." 
+    };
   }
 }

@@ -1,24 +1,11 @@
-import {
-  Box,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Divider,
-  Button,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React from "react";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { getActiveOrderTotalPrice } from "../cart/action";
 import { ORDERSTATUS } from "@prisma/client";
-import AddIcon from "@mui/icons-material/Add";
+import { ArrowLeft, Plus } from "lucide-react";
 
-import { OrderStatusUpdate } from "@/components/OrderStatusUpate";
+import { OrderStatusUpdate } from "@/components/order/OrderStatusUpate";
 import { OrderWithOrdersAddons } from "../menu/[id]/page";
 
 interface Props {
@@ -40,39 +27,27 @@ export default async function CartPage({ searchParams }: Props) {
     return null;
   }
   return (
-    <Box sx={{ maxWidth: 700, margin: "auto", p: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          mb: 2,
-        }}
-      >
+    <div className="max-w-3xl mx-auto p-4 md:p-6 w-full">
+      <div className="flex items-center justify-between mb-6">
         <Link href={`/order?tableId=${tableId}`} passHref>
-          <IconButton edge="start" color="inherit" aria-label="back">
-            <ArrowBackIcon />
-          </IconButton>
+          <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 rounded-full hover:bg-slate-100">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
         </Link>
 
-        <Typography variant="h5">My Orders</Typography>
+        <h1 className="text-xl font-bold text-slate-800">My Orders</h1>
+        
         <Link href={`/order?tableId=${tableId}`}>
-          <Button variant="text" sx={{ color: "primary.main" }}>
-            <Typography sx={{ display: "flex", alignItems: "center" }}>
-              Add More
-              <AddIcon
-                sx={{
-                  ml: 1,
-                  border: "1px solid primary.main",
-                  color: "primary.main",
-                }}
-              />
-            </Typography>
-          </Button>
+          <button className="flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+            Add More
+            <span className="ml-1 p-0.5 border border-blue-600 rounded">
+              <Plus className="w-3 h-3" />
+            </span>
+          </button>
         </Link>
-      </Box>
+      </div>
 
-      <List>
+      <ul className="space-y-4">
         {cartOrders.map(async (cartOrder) => {
           const { id, menu, quantity, status } = cartOrder;
           const orderAddon = await prisma.ordersAddons.findMany({
@@ -83,103 +58,69 @@ export default async function CartPage({ searchParams }: Props) {
           const addon = orderAddon.map((item) => item.addon);
 
           return (
-            <>
-              <React.Fragment key={cartOrder.id}>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar
+            <React.Fragment key={cartOrder.id}>
+              <li className="flex flex-col sm:flex-row items-start sm:items-center py-4">
+                  <div className="flex-shrink-0 mb-3 sm:mb-0">
+                    <img
                       alt={menu.name}
-                      src={
-                        menu.imageUrl || "/placeholder.svg?height=80&width=80"
-                      }
-                      variant="rounded"
-                      sx={{ width: 80, height: 80 }}
+                      src={menu.imageUrl || "/placeholder.svg?height=80&width=80"}
+                      className="w-20 h-20 object-cover rounded-lg shadow-sm"
                     />
-                  </ListItemAvatar>
-                  <ListItemText
-                    sx={{ ml: 2 }}
-                    primary={menu.name}
-                    secondary={
-                      <>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          ${menu.price}
-                        </Typography>
+                  </div>
+                  
+                  <div className="ml-0 sm:ml-4 flex-1">
+                    <h3 className="text-lg font-semibold text-slate-800">{menu.name}</h3>
+                    
+                    <div className="mt-1 flex flex-col">
+                      <span className="text-sm font-medium text-slate-900">
+                        ${menu.price}
+                      </span>
 
-                        {/* addon section*/}
-                        <Typography
-                          component="span"
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ display: "flex", marginTop: "8px" }}
-                        >
-                          <Typography variant="caption" color="text.secondary">
+                      {addon.length > 0 && (
+                        <div className="flex flex-col mt-2 space-y-1">
+                          <span className="text-xs text-slate-500 font-medium">
                             Add-ons ::
-                          </Typography>
+                          </span>
                           {addon.map((item) => (
-                            <Typography
-                              sx={{
-                                ml: 1,
-                                display: "flex",
-                                flexDirection: "column",
-                              }}
+                            <span
                               key={item.id}
-                              variant="caption"
-                              color="text.secondary"
+                              className="text-xs text-slate-600 ml-2"
                             >
-                              {item.name} : ({item.price}$) ,
-                            </Typography>
+                              - {item.name}: (${item.price})
+                            </span>
                           ))}
-                        </Typography>
-                      </>
-                    }
-                  />
-                  <Box sx={{ mr: 6 }}>
-                    <OrderStatusUpdate order={cartOrder} />
-                  </Box>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end mt-4 sm:mt-0 space-y-4 sm:ml-4">
+                    <div className="w-full sm:w-auto">
+                      <OrderStatusUpdate order={cartOrder} />
+                    </div>
 
-                  <Box>
-                    {/* //   quantity section */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        fontSize={"20px"}
-                        sx={{
-                          width: "40px",
-                          userSelect: "none",
-                          border: "1px groove grey",
-                          textAlign: "center",
-                          py: 0.5,
-                          px: 0,
-                        }}
-                      >
+                    <div className="flex items-center bg-white border border-slate-200 rounded shadow-sm">
+                      <span className="px-5 py-1.5 text-lg font-medium text-slate-800 w-12 text-center select-none">
                         {quantity}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </React.Fragment>
-            </>
+                      </span>
+                    </div>
+                  </div>
+              </li>
+              <hr className="border-slate-100" />
+            </React.Fragment>
           );
         })}
-      </List>
+      </ul>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mx: 2 }}>
-        <Typography variant="h5" sx={{ mt: 2 }}>
+      <div className="flex justify-between items-center mt-6 py-4 border-t border-slate-200">
+        <h2 className="text-xl font-bold text-slate-800">
           TotalPrice
-        </Typography>
-        <Typography variant="h5" sx={{ mt: 2 }}>
-          {getActiveOrderTotalPrice(tableId)} $
-        </Typography>
-      </Box>
-    </Box>
+        </h2>
+        <span className="text-2xl font-bold text-slate-900">
+          ${getActiveOrderTotalPrice(tableId)}
+        </span>
+      </div>
+    </div>
   );
 }
+

@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export async function CreateAddonCategory(formData: FormData) {
@@ -101,3 +101,4 @@ export async function DeleteAddonCategory(formData: FormData) {
   });
   redirect("/backoffice/addon-categories");
 }
+

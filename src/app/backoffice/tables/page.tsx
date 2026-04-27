@@ -1,37 +1,32 @@
-import ItemCard from "@/components/ItemCard";
-import { Box, Button } from "@mui/material";
+import ItemCard from "@/components/menu/ItemCard";
 import Link from "next/link";
-import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-import { getSelectedLocationTables } from "@/libs/action";
+import { TableProperties } from "lucide-react";
+import { getSelectedLocationTables } from "@/lib/actions/action";
 
 export default async function MenusPage() {
   const tables = await getSelectedLocationTables();
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <h1>Tables </h1>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Tables</h1>
         <Link href="/backoffice/tables/new">
-          <Button variant="contained" sx={{ bgcolor: "#FFCA40" ,color: "#000000" ,":hover": { bgcolor: "#FFCA40" }}}>
+          <button className="bg-[#FFCA40] text-slate-900 font-semibold px-4 py-2 rounded shadow-sm hover:bg-[#e6b639] transition-colors">
             Add tables
-          </Button>
+          </button>
         </Link>
-      </Box>
-      <Box sx={{ mt: 3, display: "flex" }}>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-6">
         {tables.map((table) => (
           <ItemCard
             key={table.id}
-            icon={<TableRestaurantIcon fontSize="large" />}
+            icon={<TableProperties className="w-8 h-8 text-slate-700" />}
             title={table.name}
             href={`/backoffice/tables/${table.id}`}
             isAvailable
           />
         ))}
-      </Box>
-    </>
+      </div>
+    </div>
   );
 }
+

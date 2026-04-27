@@ -1,5 +1,5 @@
-import { prisma } from "@/libs/prisma";
-import { MenuOption } from "@/components/MenuOption";
+import { prisma } from "@/lib/prisma";
+import { MenuOption } from "@/components/menu/MenuOption";
 import { Prisma } from "@prisma/client";
 
 interface Props {

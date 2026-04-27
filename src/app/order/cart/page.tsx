@@ -1,25 +1,10 @@
-import {
-  Box,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Divider,
-  Button,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React from "react";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { confrimCartOrder, deleteOrder, getTotalPrice } from "./action";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { ORDERSTATUS } from "@prisma/client";
+import { ArrowLeft, Trash2, Edit, Plus, Minus } from "lucide-react";
+import { SubmitButton } from "@/components/shared/SubmitButton";
 
 interface Props {
   searchParams: { tableId: string };
@@ -34,56 +19,36 @@ export default async function CartPage({ searchParams }: Props) {
     },
   });
 
- 
   return (
-    <Box sx={{ maxWidth: 600, margin: "auto", p: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          mb: 2,
-        }}
-      >
+    <div className="max-w-2xl mx-auto p-4 md:p-6 w-full">
+      <div className="flex items-center justify-between mb-6">
         <Link href={`/order?tableId=${tableId}`} passHref>
-          <IconButton edge="start" color="inherit" aria-label="back">
-            <ArrowBackIcon />
-          </IconButton>
+          <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 rounded-full hover:bg-slate-100">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
         </Link>
 
-        <Typography variant="h5">My cart</Typography>
+        <h1 className="text-xl font-bold text-slate-800">My Cart</h1>
 
-        <IconButton edge="start" color="inherit" aria-label="back">
-          <DeleteOutlineIcon />
-        </IconButton>
-      </Box>
+        <button className="text-slate-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
+          <Trash2 className="w-5 h-5" />
+        </button>
+      </div>
+
       {cartOrders.length === 0 ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            mt: 20,
-            textAlign: "center", // Center the text inside
-          }}
-        >
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ color: "text.secondary" }}
-          >
+        <div className="flex flex-col items-center justify-center mt-20 text-center space-y-4">
+          <p className="text-lg text-slate-500 font-medium">
             No Order In Cart
-          </Typography>
+          </p>
           <Link href={`/order?tableId=${tableId}`} passHref>
-            <Button variant="contained" sx={{ mt: 1 }}>
+            <button className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">
               Add More Menu
-            </Button>
+            </button>
           </Link>
-        </Box>
+        </div>
       ) : (
         <>
-          <List>
+          <ul className="space-y-4">
             {cartOrders.map(async (cartOrder) => {
               const { id, menu, quantity } = cartOrder;
               const orderAddon = await prisma.ordersAddons.findMany({
@@ -94,192 +59,101 @@ export default async function CartPage({ searchParams }: Props) {
               const addon = orderAddon.map((item) => item.addon);
 
               return (
-                <>
-                  <React.Fragment key={cartOrder.id}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={menu.name}
-                          src={
-                            menu.imageUrl ||
-                            "/placeholder.svg?height=80&width=80"
-                          }
-                          variant="rounded"
-                          sx={{ width: 80, height: 80 }}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        sx={{ ml: 2 }}
-                        primary={menu.name}
-                        secondary={
-                          <>
-                            <Typography
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              ${menu.price}
-                            </Typography>
-
-                            {/* addon section*/}
-                            <Typography
-                              component="span"
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ display: "flex", marginTop: "8px" }}
-                            >
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                              >
-                                Add-ons ::
-                              </Typography>
-                              {addon.map((item) => (
-                                <Typography
-                                  sx={{
-                                    ml: 1,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                  key={item.id}
-                                  variant="caption"
-                                  color="text.secondary"
-                                >
-                                  {item.name} : ({item.price}$) ,
-                                </Typography>
-                              ))}
-                            </Typography>
-                          </>
-                        }
+                <React.Fragment key={cartOrder.id}>
+                  <li className="flex flex-col sm:flex-row items-start py-4">
+                    <div className="flex-shrink-0 mb-3 sm:mb-0">
+                      <img
+                        alt={menu.name}
+                        src={menu.imageUrl || "/placeholder.svg?height=80&width=80"}
+                        className="w-20 h-20 object-cover rounded-lg shadow-sm"
                       />
+                    </div>
 
-                      <Box>
-                        {/* //   quantity section */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <IconButton
-                            sx={{ border: "1px solid grey" }}
-                            size="small"
-                          >
-                            <RemoveIcon />
-                          </IconButton>
+                    <div className="ml-0 sm:ml-4 flex-1">
+                      <h3 className="text-lg font-semibold text-slate-800">{menu.name}</h3>
+                      
+                      <div className="mt-1 flex flex-col">
+                        <span className="text-sm font-medium text-slate-900">
+                          ${menu.price}
+                        </span>
 
-                          <Typography fontSize={"20px"} sx={{ mx: 1 }}>
-                            {" "}
-                            {quantity}
-                          </Typography>
-
-                          <IconButton
-                            sx={{ border: "1px solid grey" }}
-                            size="small"
-                          >
-                            <AddIcon />
-                          </IconButton>
-                        </Box>
-                        {/* //   edit and delete section */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row-reverse",
-                            cursor: "pointer",
-                            justifyContent: "space-between",
-                            mx: 1,
-                            mt: 2,
-                            size: "small",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              borderColor: "grey.300",
-                              color: "#00a152",
-                              ":hover": { color: "#00e676" },
-                            }}
-                            component={"form"}
-                          >
-                            <Link
-                              href={`/order/menu/${cartOrder.menuId}?tableId=${cartOrder.tableId}&orderId=${cartOrder.id}`}
-                            >
-                              <IconButton
-                                type="submit"
-                                sx={{
-                                  ":hover": {
-                                    backgroundColor: "#00e676",
-                                  },
-                                }}
+                        {addon.length > 0 && (
+                          <div className="flex flex-col mt-2 space-y-1">
+                            <span className="text-xs text-slate-500 font-medium">
+                              Add-ons ::
+                            </span>
+                            {addon.map((item) => (
+                              <span
+                                key={item.id}
+                                className="text-xs text-slate-600 ml-2"
                               >
-                                <BorderColorIcon sx={{ color: "#00a152" }} />
-                              </IconButton>
-                            </Link>
-                          </Box>
+                                - {item.name}: (${item.price})
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-                          <Box
-                            sx={{
-                              borderColor: "grey.300",
-                              px: 1,
-                            }}
-                            component={"form"}
-                            action={deleteOrder}
+                    <div className="flex flex-col items-end mt-4 sm:mt-0 space-y-3 sm:ml-4">
+                      <div className="flex items-center space-x-3 bg-white border border-slate-200 rounded-md shadow-sm p-1">
+                        <button className="p-1 hover:bg-slate-100 rounded text-slate-600 transition">
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-lg font-medium text-slate-800 w-6 text-center">
+                          {quantity}
+                        </span>
+                        <button className="p-1 hover:bg-slate-100 rounded text-slate-600 transition">
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Link
+                          href={`/order/menu/${cartOrder.menuId}?tableId=${cartOrder.tableId}&orderId=${cartOrder.id}`}
+                        >
+                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-colors">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </Link>
+
+                        <form action={deleteOrder}>
+                          <input type="hidden" name="id" defaultValue={cartOrder.id} />
+                          <button
+                            type="submit"
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
                           >
-                            <input
-                              type="hidden"
-                              name="id"
-                              defaultValue={cartOrder.id}
-                            />
-                            <IconButton
-                              type="submit"
-                              sx={{
-                                ":hover": {
-                                  color: "#b2102f",
-                                  backgroundColor: "#ff1744",
-                                },
-                              }}
-                            >
-                              <DeleteOutlineIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </ListItem>
-                    <Divider variant="inset" component="li" />
-                  </React.Fragment>
-                </>
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </li>
+                  <hr className="border-slate-100" />
+                </React.Fragment>
               );
             })}
-          </List>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mx: 2 }}>
-            <Typography variant="h5" sx={{ mt: 2 }}>
-              TotalPrice
-            </Typography>
-            <Typography variant="h5" sx={{ mt: 2 }}>
-              {getTotalPrice(tableId)} $
-            </Typography>
-          </Box>
+          </ul>
 
-          <Box
-            component={"form"}
+          <div className="flex justify-between items-center mt-6 py-4 border-t border-slate-200">
+            <h2 className="text-xl font-bold text-slate-800">
+              TotalPrice
+            </h2>
+            <span className="text-2xl font-bold text-slate-900">
+              ${getTotalPrice(tableId)}
+            </span>
+          </div>
+
+          <form
             action={confrimCartOrder}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              mt: 2,
-            }}
+            className="flex justify-center mt-6"
           >
             <input type="hidden" name="tableId" value={tableId} />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "fit-content" }}
-            >
-              Confirm Orders
-            </Button>
-          </Box>
+            <SubmitButton text="Confirm Orders" size="lg" />
+          </form>
         </>
       )}
-    </Box>
+    </div>
   );
 }
+

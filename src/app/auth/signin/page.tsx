@@ -1,66 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography,
-  styled,
-} from "@mui/material";
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  height: "100vh",
-  display: "flex",
-  borderRadius: 0,
-  overflow: "hidden",
-  border: "6px solid #FFCA40",
-}));
-
-import { createStyles } from "@mui/material/styles";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-
-const ImageSection = styled(Box)(() =>
-  createStyles({
-    flex: 0.5,
-    position: "relative",
-    display: { xs: "none", md: "block" },
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: "linear-gradient(to bottom, rgba(246, 236, 236, 0.3), )",
-      zIndex: 1,
-    },
-  })
-);
-
-const FormSection = styled(Box)(({ theme }) => ({
-  flex: 0.5,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  padding: theme.spacing(8),
-  backgroundColor: "#FFCA40",
-  color: "white",
-}));
-
-const GoogleButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[100],
-  color: theme.palette.text.primary,
-  "&:hover": {
-    backgroundColor: theme.palette.grey[200],
-  },
-}));
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -74,141 +17,89 @@ export default function LoginForm() {
   };
 
   return (
-    <StyledPaper elevation={0}>
-      <ImageSection>
-        <Box
-          component="img"
-          src="/image16.jpg"
-          alt="Login background"
-          sx={{
-            width: "80%",
-            height: "80%",
-            objectFit: "cover",
-            position: "relative",
-            zIndex: 0,
-          }}
-        />
+    <div className="h-screen w-full flex border-[6px] border-[#FFCA40] relative overflow-hidden bg-[#FFCA40]">
+      {/* Image Section */}
+      <div className="hidden md:block flex-1 relative bg-cover bg-center">
+        <div className="absolute inset-0 z-0 h-full w-full">
+          <img
+            src="/image16.jpg"
+            alt="Login background"
+            className="w-[80%] h-[80%] object-cover relative z-0 mx-auto mt-20 shadow-xl"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f6ecec4d] to-transparent z-10" />
 
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 50,
-            left: "25%",
-            zIndex: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Typography
-            color="#FFB22C"
-            sx={{ fontWeight: "bold", fontSize: "30px" }}
-          >
-            Welcome to <span style={{ color: "#000000" }}> Foodie POS</span>
-          </Typography>
-          <Typography
-            color="#F0A04B"
-            sx={{
-              fontWeight: "semi-bold",
-              fontSize: "15px",
-              fontFamily: "Monospace",
-            }}
-          >
+        <div className="absolute bottom-20 left-1/4 z-20 flex flex-col items-center gap-1">
+          <h1 className="text-[#FFB22C] font-bold text-3xl drop-shadow-md">
+            Welcome to <span className="text-black"> Foodie POS</span>
+          </h1>
+          <p className="text-[#F0A04B] font-semibold text-sm font-mono drop-shadow-md">
             Experience Effortless Backoffice Managing
-          </Typography>
-        </Box>
-      </ImageSection>
+          </p>
+        </div>
+      </div>
 
-      <FormSection>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            maxWidth: 400,
-            mx: "auto",
-            width: "100%",
-            color: "#000000",
-          }}
-        >
-          <Typography variant="h3" gutterBottom>
-            Welcome
-          </Typography>
-          <Typography variant="body1" mb={4}>
+      {/* Form Section */}
+      <div className="flex-1 flex flex-col justify-center p-8 text-black z-10 bg-[#FFCA40]">
+        <div className="max-w-[400px] w-full mx-auto">
+          <h2 className="text-4xl font-bold mb-2 text-black">Welcome</h2>
+          <p className="text-base mb-8 text-slate-800 font-medium">
             Start Managing Your Accounts Faster and Better
-          </Typography>
+          </p>
 
-          <Box sx={{ mb: 3 }}>
-            <TextField
-              fullWidth
-              placeholder="Email"
-              InputLabelProps={{ shrink: false }}
-              variant="outlined"
-              margin="normal"
-              sx={{ backgroundColor: "#FEF9F2", color: "white" }}
+          <form onSubmit={handleSubmit} className="mb-6">
+            <div className="space-y-4">
+              <div>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  disabled={isLoading}
+                  className="w-full px-4 py-3 bg-[#FEF9F2] text-black border-none rounded focus:ring-2 focus:ring-slate-400 outline-none placeholder:text-slate-500 disabled:opacity-50 transition-all font-medium"
+                />
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  disabled={isLoading}
+                  className="w-full px-4 py-3 bg-[#FEF9F2] text-black border-none rounded focus:ring-2 focus:ring-slate-400 outline-none pr-12 placeholder:text-slate-500 disabled:opacity-50 transition-all font-medium"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
               disabled={isLoading}
-            />
-            <TextField
-              fullWidth
-              placeholder="Password"
-              variant="outlined"
-              margin="normal"
-              sx={{ backgroundColor: "#FEF9F2", color: "white" }}
-              type={showPassword ? "text" : "password"}
-              disabled={isLoading}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
+              className="w-full mt-6 bg-black text-[#FFCA40] py-3 rounded text-lg font-bold hover:bg-[#292828] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
 
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            type="submit"
-            disabled={isLoading}
-            sx={{
-              mb: 2,
-              backgroundColor: "#000000",
-              color: "#FFCA40",
-              ":hover": { backgroundColor: "#292828" ,color: "#FFCA40"},
-            }}
-          >
-            {isLoading ? "Signing in..." : "Sign in"}
-          </Button>
+          <div className="my-6 flex items-center w-full">
+            <hr className="flex-1 border-black/20" />
+            <span className="px-3 text-sm text-black/60 font-semibold">OR</span>
+            <hr className="flex-1 border-black/20" />
+          </div>
 
-          <Box sx={{ my: 3 }}>
-            <Divider>
-              <Typography variant="body2" color="text.secondary">
-                OR
-              </Typography>
-            </Divider>
-          </Box>
-
-          <GoogleButton
-            fullWidth
-            variant="contained"
-            size="large"
+          <button
             onClick={() => signIn("google", { callbackUrl: "/backoffice" })}
-            startIcon={
-              <Image src={"/google.png"} alt="Google" width={24} height={24} />
-            }
             disabled={isLoading}
+            className="w-full flex items-center justify-center space-x-2 bg-slate-50 hover:bg-slate-200 text-slate-800 py-3 rounded text-base font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-slate-300"
           >
-            Continue with Google
-          </GoogleButton>
-        </Box>
-      </FormSection>
-    </StyledPaper>
+            <Image src="/google.png" alt="Google" width={24} height={24} />
+            <span>Continue with Google</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

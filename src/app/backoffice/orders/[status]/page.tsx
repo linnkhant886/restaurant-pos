@@ -1,9 +1,9 @@
-import OrderCard from "@/components/OrderCard";
-import { getSelectedLocationTables } from "@/libs/action";
-import { prisma } from "@/libs/prisma";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import OrderCard from "@/components/order/OrderCard";
+import { getSelectedLocationTables } from "@/lib/actions/action";
+import { prisma } from "@/lib/prisma";
 import { ORDERSTATUS, Prisma } from "@prisma/client";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface Props {
   params: { status: ORDERSTATUS };
@@ -36,47 +36,54 @@ export default async function OrderPage({ params }: Props) {
         OrdersAddons: true,
       },
     });
+    
   return (
-    <>
+    <div className="w-full">
       <div className="p-6 max-w-md mx-auto">
-        <Stack direction="row" spacing={2} justifyContent="flex-end">
+        <div className="flex flex-row gap-4 justify-end">
           <Link href={"/backoffice/orders/pending"}>
-            <Button
-              variant={
-                status === ORDERSTATUS.PENDING ? "contained" : "outlined"
-              }
-              color="warning"
+            <button
+              className={cn(
+                "px-4 py-2 rounded-md font-semibold text-sm transition-colors shadow-sm",
+                status === ORDERSTATUS.PENDING 
+                  ? "bg-amber-500 text-white hover:bg-amber-600" 
+                  : "border border-amber-500 text-amber-500 hover:bg-amber-50"
+              )}
             >
               PENDING
-            </Button>
+            </button>
           </Link>
           <Link href={"/backoffice/orders/cooking"}>
-            <Button
-              variant={
-                status === ORDERSTATUS.COOKING ? "contained" : "outlined"
-              }
-              color="info"
+            <button
+              className={cn(
+                "px-4 py-2 rounded-md font-semibold text-sm transition-colors shadow-sm",
+                status === ORDERSTATUS.COOKING 
+                  ? "bg-blue-500 text-white hover:bg-blue-600" 
+                  : "border border-blue-500 text-blue-500 hover:bg-blue-50"
+              )}
             >
               COOKING
-            </Button>
+            </button>
           </Link>
           <Link href={"/backoffice/orders/complete"}>
-            <Button
-              variant={
-                status === ORDERSTATUS.COMPLETE ? "contained" : "outlined"
-              }
-              color="success"
+            <button
+              className={cn(
+                "px-4 py-2 rounded-md font-semibold text-sm transition-colors shadow-sm",
+                status === ORDERSTATUS.COMPLETE 
+                  ? "bg-green-500 text-white hover:bg-green-600" 
+                  : "border border-green-500 text-green-500 hover:bg-green-50"
+              )}
             >
               COMPLETE
-            </Button>
+            </button>
           </Link>
-        </Stack>
-        <Typography variant="body1" className="mt-4 text-center">
+        </div>
+        <p className="mt-4 text-center text-slate-700">
           Current Status: {status}
-        </Typography>
+        </p>
       </div>
 
-      <Box sx={{ display: "grid ", gridTemplateColumns: "repeat(4, 1fr)" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {orders.map(async (order) => {
           const addonIds = order.OrdersAddons.map((addon) => addon.addonId);
           const addons: AddonWithAddonCategory[] = await prisma.addons.findMany(
@@ -93,7 +100,7 @@ export default async function OrderPage({ params }: Props) {
           );
           return <OrderCard key={order.id} order={order} addons={addons} />;
         })}
-      </Box>
-    </>
+      </div>
+    </div>
   );
 }

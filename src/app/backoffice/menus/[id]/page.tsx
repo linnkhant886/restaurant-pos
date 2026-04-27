@@ -1,10 +1,10 @@
 import { getMenu } from "../actions";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   getCompanyAddon,
   getCompanyAddonCategories,
   getCompanyId,
-} from "@/libs/action";
+} from "@/lib/actions/action";
 import UpdateMenuFormData from "./updateMenuFormData";
 
 export interface prop {

@@ -1,8 +1,8 @@
 
 
 import { CreateMenu } from "../actions";
-import { prisma } from "@/libs/prisma";
-import { getCompanyAddonCategories, getCompanyId } from "@/libs/action";
+import { prisma } from "@/lib/prisma";
+import { getCompanyAddonCategories, getCompanyId } from "@/lib/actions/action";
 import NewFormData from "./newFormData";
 
 export default async function NewMenuPage() {
@@ -15,3 +15,4 @@ export default async function NewMenuPage() {
 
   return <NewFormData menuCategories={menuCategories} addOnCategories={addOnCategories}/>
 }
+

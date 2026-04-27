@@ -1,7 +1,7 @@
 "use server";
 import QrCode from "qrcode";
 import { put } from "@vercel/blob";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { config } from "@/config";
 import { Tables } from "@prisma/client";
@@ -64,3 +64,4 @@ export async function qrCodeImageUrl(table: Tables) {
   });
   return url;
 }
+

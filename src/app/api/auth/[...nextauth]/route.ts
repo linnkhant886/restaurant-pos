@@ -1,6 +1,6 @@
 import { config } from "@/config";
-import { CreateDefaultData } from "@/libs/action";
-import { prisma } from "@/libs/prisma";
+import { CreateDefaultData } from "@/lib/actions/action";
+import { prisma } from "@/lib/prisma";
 import NextAuth, { User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";

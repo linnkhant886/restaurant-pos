@@ -1,36 +1,33 @@
-import ItemCard from "@/components/ItemCard";
-import EggIcon from "@mui/icons-material/Egg";
-import { prisma } from "@/libs/prisma";
-import { Box, Button } from "@mui/material";
+import ItemCard from "@/components/menu/ItemCard";
+import { Egg } from "lucide-react";
 import Link from "next/link";
-import { getCompanyAddon } from "@/libs/action";
+import { getCompanyAddon } from "@/lib/actions/action";
 
 export default async function MenusPage() {
   const Addons = await getCompanyAddon()
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <h1>Addons</h1>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Addons</h1>
         <Link href="/backoffice/addons/new">
-          <Button variant="contained">New Addon</Button>
+          <button className="bg-blue-600 text-white font-semibold px-4 py-2 rounded shadow-sm hover:bg-blue-700 transition-colors">
+            New Addon
+          </button>
         </Link>
-      </Box>
-      <Box sx={{ mt: 3, display: "flex" , flexWrap: "wrap"  }}>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-6">
         {Addons.map((addon) => (
           <ItemCard
             key={addon.id}
-            icon={<EggIcon fontSize="large" />}
+            icon={<Egg className="w-8 h-8 text-slate-700" />}
             title={addon.name}
             href={`/backoffice/addons/${addon.id}`}
             isAvailable
           />
         ))}
-      </Box>
-    </>
+      </div>
+    </div>
   );
 }
+
