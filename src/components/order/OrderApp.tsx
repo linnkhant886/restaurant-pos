@@ -9,7 +9,7 @@ import CartDrawer, { CartItem } from "@/components/order/CartDrawer";
 import CartToast from "@/components/order/CartToast";
 import OrderSummaryView from "@/components/order/OrderSummaryView";
 import MenuDetailModal from "@/components/order/MenuDetailModal";
-import { ShoppingBag, MapPin, Minus, Plus } from "lucide-react";
+import { ShoppingBag, MapPin, Minus, Plus, Clock } from "lucide-react";
 import Image from "next/image";
 
 /* ─── helpers ─────────────────────────────────────────────── */
@@ -164,9 +164,10 @@ interface Props {
   menu: MenuWithAddons[];
   tableId: string;
   cartOrders: CartOrderWithMenu[];
+  activeOrdersCount: number;
 }
 
-export default function OrderApp({ menuCategories, company, menu, tableId, cartOrders }: Props) {
+export default function OrderApp({ menuCategories, company, menu, tableId, cartOrders, activeOrdersCount }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -225,9 +226,12 @@ export default function OrderApp({ menuCategories, company, menu, tableId, cartO
       startTransition(async () => {
         await addItemToCart(item.id, Number(tableId));
         router.refresh();
+        if (activeOrdersCount > 0) {
+          setSummaryOpen(true);
+        }
       });
     },
-    [tableId, totalCartQty]
+    [tableId, totalCartQty, activeOrdersCount]
   );
 
   const handleDecrement = useCallback((orderId: number) => {
@@ -246,6 +250,9 @@ export default function OrderApp({ menuCategories, company, menu, tableId, cartO
   const handleModalAdded = (name: string) => {
     setToast({ name, count: totalCartQty + 1 });
     router.refresh();
+    if (activeOrdersCount > 0) {
+      setSummaryOpen(true);
+    }
   };
 
   return (
@@ -268,22 +275,45 @@ export default function OrderApp({ menuCategories, company, menu, tableId, cartO
           Table {tableId}
         </div>
 
-        <button
-          onClick={() => setCartOpen(true)}
-          className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all hover:opacity-85 active:scale-95"
-          style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
-        >
-          <ShoppingBag className="h-4 w-4" />
-          Cart
-          {totalCartQty > 0 && (
-            <span
-              className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold"
-              style={{ backgroundColor: "#EF4444", color: "white", outline: "2px solid var(--rf-yellow)" }}
-            >
-              {totalCartQty}
-            </span>
-          )}
-        </button>
+        {activeOrdersCount > 0 && (
+          <button
+            onClick={() => setSummaryOpen(true)}
+            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all hover:opacity-85 active:scale-95"
+            style={{ backgroundColor: "var(--rf-paper)", color: "var(--rf-ink)", border: "1px solid var(--rf-line)" }}
+          >
+            <Clock className="h-4 w-4" />
+            Orders
+            {totalCartQty > 0 ? (
+              <span
+                className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold"
+                style={{ backgroundColor: "#F97316", color: "white", outline: "2px solid var(--rf-yellow)" }}
+              >
+                {totalCartQty}
+              </span>
+            ) : (
+               <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse ml-0.5" />
+            )}
+          </button>
+        )}
+
+        {activeOrdersCount === 0 && (
+          <button
+            onClick={() => setCartOpen(true)}
+            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all hover:opacity-85 active:scale-95"
+            style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Cart
+            {totalCartQty > 0 && (
+              <span
+                className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold"
+                style={{ backgroundColor: "#EF4444", color: "white", outline: "2px solid var(--rf-yellow)" }}
+              >
+                {totalCartQty}
+              </span>
+            )}
+          </button>
+        )}
       </header>
 
       {/* ── Category Pills ── */}
@@ -357,6 +387,7 @@ export default function OrderApp({ menuCategories, company, menu, tableId, cartO
         items={cartItems}
         tableId={tableId}
         onSentToKitchen={() => { setCartOpen(false); setSummaryOpen(true); }}
+        onViewActiveOrders={activeOrdersCount > 0 ? () => { setCartOpen(false); setSummaryOpen(true); } : undefined}
       />
 
       {/* ── Order Summary ── */}

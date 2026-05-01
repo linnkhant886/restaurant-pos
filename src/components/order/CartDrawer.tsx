@@ -23,9 +23,10 @@ interface Props {
   items: CartItem[];
   tableId: string;
   onSentToKitchen: () => void;
+  onViewActiveOrders?: () => void;
 }
 
-export default function CartDrawer({ open, onClose, items, tableId, onSentToKitchen }: Props) {
+export default function CartDrawer({ open, onClose, items, tableId, onSentToKitchen, onViewActiveOrders }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [sending, setSending] = useState(false);
@@ -110,6 +111,15 @@ export default function CartDrawer({ open, onClose, items, tableId, onSentToKitc
               <p className="text-sm font-medium" style={{ color: "rgba(27,31,59,0.4)" }}>
                 Your cart is empty
               </p>
+              {onViewActiveOrders && (
+                <button
+                  onClick={onViewActiveOrders}
+                  className="mt-4 px-6 py-2 rounded-xl text-sm font-bold border transition-all hover:bg-black/5"
+                  style={{ borderColor: "var(--rf-line)", color: "var(--rf-ink)" }}
+                >
+                  View Active Orders
+                </button>
+              )}
             </div>
           ) : (
             items.map((item) => {

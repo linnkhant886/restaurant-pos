@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchActiveOrdersWithDetails } from "@/app/order/cart/action";
+import { fetchAllOrdersWithDetails, sendToKitchen } from "@/app/order/cart/action";
 import { Clock, Utensils, CheckCircle, ChevronDown, Plus, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type ActiveOrder = Awaited<ReturnType<typeof fetchActiveOrdersWithDetails>>[0];
+type ActiveOrder = Awaited<ReturnType<typeof fetchAllOrdersWithDetails>>[0];
 
 interface Props {
   open: boolean;
@@ -36,11 +36,11 @@ const STATUS_CONFIG = {
     dot: "#22C55E",
   },
   CART: {
-    label: "In Cart",
+    label: "New - In Cart",
     icon: Clock,
-    bg: "var(--rf-cream-2)",
-    color: "rgba(27,31,59,0.6)",
-    dot: "var(--rf-line-2)",
+    bg: "#FFF7ED",
+    color: "#F97316",
+    dot: "#F97316",
   },
 };
 
@@ -52,7 +52,7 @@ export default function OrderSummaryView({ open, tableId, onAddMore }: Props) {
   useEffect(() => {
     if (!open) return;
     setLoading(true);
-    fetchActiveOrdersWithDetails(Number(tableId)).then((data) => {
+    fetchAllOrdersWithDetails(Number(tableId)).then((data) => {
       setOrders(data);
       setLoading(false);
     });
@@ -62,7 +62,7 @@ export default function OrderSummaryView({ open, tableId, onAddMore }: Props) {
   useEffect(() => {
     if (!open) return;
     const interval = setInterval(async () => {
-      const data = await fetchActiveOrdersWithDetails(Number(tableId));
+      const data = await fetchAllOrdersWithDetails(Number(tableId));
       setOrders(data);
     }, 8000);
     return () => clearInterval(interval);
@@ -212,20 +212,37 @@ export default function OrderSummaryView({ open, tableId, onAddMore }: Props) {
           </div>
 
           <div className="flex gap-3">
+            {orders.some(o => o.status === "CART") ? (
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  await sendToKitchen(Number(tableId));
+                  const data = await fetchAllOrdersWithDetails(Number(tableId));
+                  setOrders(data);
+                  setLoading(false);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
+                style={{ backgroundColor: "#F97316", color: "white" }}
+              >
+                Send to Kitchen 🔥
+              </button>
+            ) : (
+              <button
+                className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-all hover:opacity-90 active:scale-[0.98]"
+                style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+              >
+                <CreditCard className="h-4 w-4" />
+                Pay Now
+              </button>
+            )}
+            
             <button
               onClick={onAddMore}
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold border transition-all hover:bg-black/4"
               style={{ borderColor: "var(--rf-line)", color: "var(--rf-ink)" }}
             >
               <Plus className="h-4 w-4" />
-              Add More Items
-            </button>
-            <button
-              className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
-            >
-              <CreditCard className="h-4 w-4" />
-              Pay Now
+              Add More
             </button>
           </div>
         </div>

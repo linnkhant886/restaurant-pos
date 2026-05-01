@@ -35,11 +35,16 @@ export default async function Order({ searchParams }: Props) {
     include: { menu: true, OrdersAddons: { include: { addon: true } } },
   });
 
+  const activeOrdersCount = await prisma.orders.count({
+    where: { tableId: Number(tableId), status: { not: ORDERSTATUS.CART } },
+  });
+
   if (!Company) return null;
 
   return (
     <OrderApp
       cartOrders={cartOrders}
+      activeOrdersCount={activeOrdersCount}
       menuCategories={MenuCategories}
       company={Company}
       menu={Menu}

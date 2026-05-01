@@ -111,6 +111,14 @@ export async function fetchActiveOrdersWithDetails(tableId: number) {
   });
 }
 
+export async function fetchAllOrdersWithDetails(tableId: number) {
+  return prisma.orders.findMany({
+    where: { tableId },
+    include: { menu: true, OrdersAddons: { include: { addon: true } } },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
 export async function getMenuAddons(menuId: number) {
   const menu = await prisma.menus.findFirst({
     where: { id: menuId },
