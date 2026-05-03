@@ -1,32 +1,70 @@
 import ItemCard from "@/components/menu/ItemCard";
 import Link from "next/link";
-import { TableProperties } from "lucide-react";
+import { TableProperties, Plus } from "lucide-react";
 import { getSelectedLocationTables } from "@/lib/actions/action";
+
+const ICON_COLORS = [
+  { bg: "#EDE0C4", fg: "#8B6914" },
+  { bg: "#F2C4C4", fg: "#9B2C2C" },
+  { bg: "#C4D9F2", fg: "#1A56A0" },
+  { bg: "#C4EDD6", fg: "#166534" },
+  { bg: "#D9C4F2", fg: "#6B21A8" },
+  { bg: "#F2E1C4", fg: "#92400E" },
+  { bg: "#C4EEF2", fg: "#0E7490" },
+  { bg: "#F2C4E1", fg: "#9D174D" },
+];
 
 export default async function MenusPage() {
   const tables = await getSelectedLocationTables();
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Tables</h1>
-        <Link href="/backoffice/tables/new">
-          <button className="bg-[#FFCA40] text-slate-900 font-semibold px-4 py-2 rounded shadow-sm hover:bg-[#e6b639] transition-colors">
-            Add tables
-          </button>
+    <>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--rf-ink)" }}>
+            Tables
+          </h1>
+          <p className="text-sm mt-0.5" style={{ color: "rgba(27,31,59,0.45)" }}>
+            {tables.length} {tables.length === 1 ? "table" : "tables"}
+          </p>
+        </div>
+        <Link
+          href="/backoffice/tables/new"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 active:scale-95"
+          style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+        >
+          <Plus className="h-4 w-4" />
+          New table
         </Link>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-6">
-        {tables.map((table) => (
-          <ItemCard
-            key={table.id}
-            icon={<TableProperties className="w-8 h-8 text-slate-700" />}
-            title={table.name}
-            href={`/backoffice/tables/${table.id}`}
-            isAvailable
-          />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {tables.map((table, i) => {
+          const color = ICON_COLORS[i % ICON_COLORS.length];
+          return (
+            <ItemCard
+              key={table.id}
+              icon={<TableProperties className="w-5 h-5" style={{ color: color.fg }} />}
+              title={table.name}
+              href={`/backoffice/tables/${table.id}`}
+              isAvailable
+              colorBg={color.bg}
+              colorFg={color.fg}
+            />
+          );
+        })}
+
+        {/* Ghost "new table" card */}
+        <Link
+          href="/backoffice/tables/new"
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed py-10 transition-all duration-200 hover:bg-black/[0.02]"
+          style={{ borderColor: "var(--rf-line-2)", minHeight: 160 }}
+        >
+          <Plus className="h-5 w-5" style={{ color: "rgba(27,31,59,0.3)" }} />
+          <span className="text-sm" style={{ color: "rgba(27,31,59,0.35)" }}>
+            new table
+          </span>
+        </Link>
       </div>
-    </div>
+    </>
   );
 }
 

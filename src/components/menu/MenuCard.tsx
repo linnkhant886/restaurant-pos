@@ -1,6 +1,7 @@
 import React from "react";
 import { Menus } from "@prisma/client";
 import Image from 'next/image';
+import { Pencil, Utensils } from "lucide-react";
 
 interface Props {
   menu: Menus;
@@ -17,35 +18,62 @@ export default function MenuCard({ menu, isAvailable, onClick }: Props) {
   
   return (
     <div
-      onClick={onClick}
-      className="block no-underline cursor-pointer"
+      className="group relative rounded-2xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+      style={{
+        backgroundColor: "var(--rf-paper)",
+        borderColor: "var(--rf-line)",
+        opacity: isAvailable ? 1 : 0.55,
+      }}
     >
-      <div className="w-full max-w-[300px] rounded-lg shadow-md hover:shadow-lg transition-shadow border border-slate-100 bg-white overflow-hidden mr-4 mb-4">
-        <div className="relative w-full h-[120px]">
-          <Image
-            src={image}
-            alt="Menu Item"
-            fill
-            className="object-cover"
-          />
+      {/* Image as Icon */}
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 overflow-hidden relative"
+        style={{ backgroundColor: "var(--rf-cream-2)" }}
+      >
+        {menu.imageUrl ? (
+          <Image src={menu.imageUrl} alt={name} fill className="object-cover" />
+        ) : (
+          <Utensils className="h-5 w-5" style={{ color: "var(--rf-ink)" }} />
+        )}
+      </div>
+
+      {/* Title */}
+      <p className="text-lg font-bold leading-tight line-clamp-1" style={{ color: "var(--rf-ink)" }}>
+        {name}
+      </p>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center gap-2">
+          <span
+            className="text-xs font-bold"
+            style={{ color: "var(--rf-ink)" }}
+          >
+            ${price}
+          </span>
+          <span
+            className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
+            style={{
+              backgroundColor: isAvailable ? "#DCFCE7" : "#FEE2E2",
+              color: isAvailable ? "#166534" : "#991B1B",
+            }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: isAvailable ? "#22C55E" : "#EF4444" }}
+            />
+            {isAvailable ? "Live" : "Off"}
+          </span>
         </div>
-        <div className="p-4 flex flex-col gap-3">
-          <div className="flex justify-between items-start">
-            <h3 className="font-bold text-lg text-slate-800 line-clamp-1">{name}</h3>
-            <span className="font-semibold text-yellow-600">${price}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            {isAvailable ? (
-              <span className="text-[10px] font-bold tracking-widest uppercase bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                Available
-              </span>
-            ) : (
-              <span className="text-[10px] font-bold tracking-widest uppercase bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                Sold Out
-              </span>
-            )}
-          </div>
-        </div>
+
+        {/* Edit button */}
+        <button
+          onClick={onClick}
+          className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors hover:bg-black/6"
+          style={{ color: "rgba(27,31,59,0.4)" }}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
       </div>
     </div>
   );

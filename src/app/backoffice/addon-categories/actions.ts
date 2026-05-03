@@ -1,27 +1,32 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 
 export async function CreateAddonCategory(formData: FormData) {
-  const name = formData.get("name") as string;
-  const isRequired = formData.get("isRequired") ? true : false;
-  const menus = formData.getAll("menus");
-  const AddonCategory = await prisma.addonCategories.create({
-    data: {
-      name: name,
-      isRequired,
-    },
-  });
+  try {
+    const name = formData.get("name") as string;
+    const isRequired = formData.get("isRequired") ? true : false;
+    const menus = formData.getAll("menus");
+    
+    if (!name) return { error: "Name is required" };
 
-  const data = menus.map((menu) => ({
-    menuId: Number(menu),
-    addonCategoryId: AddonCategory.id,
-  }));
-  await prisma.menuAddonCategories.createMany({
-    data,
-  });
-  redirect("/backoffice/addon-categories");
+    const AddonCategory = await prisma.addonCategories.create({
+      data: {
+        name: name,
+        isRequired,
+      },
+    });
+
+    const data = menus.map((menu) => ({
+      menuId: Number(menu),
+      addonCategoryId: AddonCategory.id,
+    }));
+    await prisma.menuAddonCategories.createMany({
+      data,
+    });
+  } catch (err) {
+    return { error: "Something went wrong" };
+  }
 }
 
 export async function getAddonCategory(id: number) {
@@ -34,71 +39,76 @@ export async function getAddonCategory(id: number) {
 }
 
 export async function UpdateAddonCategory(formData: FormData) {
-  const id = formData.get("id");
-  const name = formData.get("name") as string;
-  const isRequired = formData.get("isRequired") ? true : false;
-  const Updatemenus = formData.getAll("menus").map((menu) => Number(menu));
-  
-  await prisma.addonCategories.update({
-    where: {
-      id: Number(id),
-    },
-    data: {
-      name: name,
-      isRequired,
-    },
-  });
+  try {
+    const id = formData.get("id");
+    const name = formData.get("name") as string;
+    const isRequired = formData.get("isRequired") ? true : false;
+    const Updatemenus = formData.getAll("menus").map((menu) => Number(menu));
+    
+    if (!name) return { error: "Name is required" };
 
-  const menuAddonCategories = await prisma.menuAddonCategories.findMany({
-    where: {
-      addonCategoryId: Number(id),
-    },
-  });
-  
-  const menuAddonCategoriesIds = menuAddonCategories.map(
-    (item) => item.menuId
-  );
-  
+    await prisma.addonCategories.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name: name,
+        isRequired,
+      },
+    });
 
-  const isSame =
-  Updatemenus.length === menuAddonCategoriesIds.length &&
-  menuAddonCategoriesIds.every((menuId) =>
-    Updatemenus.includes(menuId)
+    const menuAddonCategories = await prisma.menuAddonCategories.findMany({
+      where: {
+        addonCategoryId: Number(id),
+      },
+    });
+    
+    const menuAddonCategoriesIds = menuAddonCategories.map(
+      (item) => item.menuId
     );
+    
+    const isSame =
+    Updatemenus.length === menuAddonCategoriesIds.length &&
+    menuAddonCategoriesIds.every((menuId) =>
+      Updatemenus.includes(menuId)
+      );
 
-  if (!isSame) {
+    if (!isSame) {
+      await prisma.menuAddonCategories.deleteMany({
+        where: {
+          addonCategoryId: Number(id),
+        },
+      });
+
+      const data = Updatemenus.map((menuId) => ({
+        menuId: Number(menuId),
+        addonCategoryId: Number(id),
+      }));
+
+      await prisma.menuAddonCategories.createMany({
+        data,
+      });
+    }
+  } catch (err) {
+    return { error: "Something went wrong" };
+  }
+}
+
+export async function DeleteAddonCategory(formData: FormData) {
+  try {
+    const id = Number(formData.get("DeleteID"));
     await prisma.menuAddonCategories.deleteMany({
       where: {
         addonCategoryId: Number(id),
       },
     });
-
-    const data = Updatemenus.map((menuId) => ({
-      menuId: Number(menuId),
-      addonCategoryId: Number(id),
-    }));
-
-    await prisma.menuAddonCategories.createMany({
-      data,
+    await prisma.addonCategories.delete({
+      where: {
+        id: Number(id),
+      },
     });
+  } catch (err) {
+    return { error: "Something went wrong" };
   }
-
-  redirect("/backoffice/addon-categories");  
-}
-
-
-export async function DeleteAddonCategory(formData: FormData) {
-  const id = Number(formData.get("DeleteID"));
-  await prisma.menuAddonCategories.deleteMany({
-    where: {
-      addonCategoryId: Number(id),
-    },
-  });
-  await prisma.addonCategories.delete({
-    where: {
-      id: Number(id),
-    },
-  });
-  redirect("/backoffice/addon-categories");
 }
 

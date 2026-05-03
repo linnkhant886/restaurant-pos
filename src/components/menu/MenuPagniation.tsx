@@ -3,9 +3,10 @@
 import { useState } from "react";
 import MenuCard from "@/components/menu/MenuCard";
 import { MenuwithDisableLocation } from "@/app/backoffice/menus/page";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { EditMenuPanel } from "@/app/backoffice/menus/EditMenuPanel";
 import { AddonCategories, MenuCategories, Menus } from "@prisma/client";
+import Link from "next/link";
 
 interface MenuWithRelations extends Menus {
   menuCategoriesMenus: { menuCategoryId: number }[];
@@ -65,28 +66,54 @@ export default function MenuPagination({
         addonCategories={addonCategories}
       />
       
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Menus</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700 transition">
+      {/* Page header */}
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--rf-ink)" }}>
+            Menus
+          </h1>
+          <p className="text-sm mt-0.5" style={{ color: "rgba(27,31,59,0.45)" }}>
+            {menus.length} {menus.length === 1 ? "menu" : "menus"}
+          </p>
+        </div>
+
+        <Link
+          href="/backoffice/menus/new"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 active:scale-95"
+          style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+        >
+          <Plus className="h-4 w-4" />
           New menu
-        </button>
+        </Link>
       </div>
 
-      <div className="flex flex-wrap flex-grow">
+      {/* Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 flex-grow content-start">
         {paginatedMenus.map((menu) => {
           const isAvailable = !menu.DisabledLocationsMenus.find(
             (item) => item.menuId === menu.id && item.locationId === selectedLocation
           );
           return (
-            <div key={menu.id} className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4">
-              <MenuCard 
-                menu={menu} 
-                isAvailable={isAvailable} 
-                onClick={() => handleEditClick(menu)}
-              />
-            </div>
+            <MenuCard 
+              key={menu.id}
+              menu={menu} 
+              isAvailable={isAvailable} 
+              onClick={() => handleEditClick(menu)}
+            />
           );
         })}
+
+        {/* Ghost "new menu" card */}
+        <Link
+          href="/backoffice/menus/new"
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed py-10 transition-all duration-200 hover:bg-black/[0.02]"
+          style={{ borderColor: "var(--rf-line-2)", minHeight: 160 }}
+        >
+          <Plus className="h-5 w-5" style={{ color: "rgba(27,31,59,0.3)" }} />
+          <span className="text-sm" style={{ color: "rgba(27,31,59,0.35)" }}>
+            new menu
+          </span>
+        </Link>
       </div>
 
       {totalPages > 1 && (

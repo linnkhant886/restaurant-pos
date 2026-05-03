@@ -26,14 +26,12 @@ const MANAGE = [
   { id: 4, label: "Addon Categories", icon: Boxes, route: "/backoffice/addon-categories" },
   { id: 5, label: "Addons", icon: Egg, route: "/backoffice/addons" },
   { id: 6, label: "Tables", icon: Table, route: "/backoffice/tables" },
-  { id: 7, label: "Locations", icon: MapPin, route: "/backoffice/locations" },
   { id: 8, label: "Settings", icon: Settings, route: "/backoffice/settings" },
 ];
 
 interface Props {
   userName: string;
   userImage: string;
-  locationName: string;
 }
 
 function NavItem({ label, icon: Icon, route }: { label: string; icon: any; route: string }) {
@@ -72,7 +70,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Sidebar({ userName, userImage, locationName }: Props) {
+export function Sidebar({ userName, userImage }: Props) {
   const initials = userName
     .split(" ")
     .map((n) => n[0])
@@ -133,9 +131,6 @@ export function Sidebar({ userName, userImage, locationName }: Props) {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-white truncate">{userName}</p>
-            <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.45)" }}>
-              {locationName}
-            </p>
           </div>
           <button
             onClick={() => signOut()}

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { DeleteAddon, getAddon, UpdateAddon } from "../actions";
-import { SubmitButton } from "@/components/shared/SubmitButton";
+import { Loader2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export interface prop {
   params: { id: string };
@@ -12,81 +13,135 @@ export default async function UpdateAddonCategoryPage({ params }: prop) {
   const addonCategories = await prisma.addonCategories.findMany();
     
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6 mt-4">
-      <div className="flex justify-end">
-        <form action={DeleteAddon}>
-          <SubmitButton text="Delete" variant="destructive" />
-          <input type="hidden" defaultValue={addons?.id} name="DeleteID" />
-        </form>
+    <div className="w-full max-w-2xl mx-auto space-y-6 mt-4 pb-12">
+      <div className="flex items-center gap-4 mb-6">
+        <Link 
+          href="/backoffice/addons"
+          className="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Link>
+        <h2 className="text-2xl font-bold" style={{ color: "var(--rf-ink)" }}>
+          Update Addon
+        </h2>
       </div>
 
-      <form action={UpdateAddon} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-6">
-        <h2 className="text-2xl font-bold text-slate-800">Update Addon</h2>
-        <input type="hidden" name="id" value={id} />
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden" style={{ backgroundColor: "var(--rf-paper)", borderColor: "var(--rf-line)" }}>
+        <form action={UpdateAddon} className="flex flex-col">
+          <div className="p-6 md:p-8 space-y-8">
+            <input type="hidden" name="id" value={id} />
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Addon Name
-            </label>
-            <input
-              type="text"
-              placeholder="Name"
-              defaultValue={addons?.name}
-              name="name"
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+            <div className="space-y-5">
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--rf-ink)" }}>
+                  Addon Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Extra Cheese"
+                  defaultValue={addons?.name}
+                  name="name"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all focus:border-[#1b1f3b]"
+                  style={{
+                    borderColor: "var(--rf-line)",
+                    backgroundColor: "var(--rf-cream)",
+                    color: "var(--rf-ink)",
+                  }}
+                />
+              </div>
 
-          <div>
-             <label className="block text-sm font-medium text-slate-700 mb-1">
-               Price
-             </label>
-             <input
-               type="text"
-               placeholder="Price"
-               defaultValue={addons?.price ?? ""}
-               name="price"
-               className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-             />
-          </div>
-        </div>
+              {/* Price */}
+              <div>
+                 <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--rf-ink)" }}>
+                   Price ($)
+                 </label>
+                 <input
+                   type="number"
+                   placeholder="0.00"
+                   defaultValue={addons?.price ?? ""}
+                   name="price"
+                   required
+                   className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all focus:border-[#1b1f3b]"
+                   style={{
+                     borderColor: "var(--rf-line)",
+                     backgroundColor: "var(--rf-cream)",
+                     color: "var(--rf-ink)",
+                   }}
+                 />
+              </div>
+            </div>
 
-        <div>
-          <h3 className="text-lg font-medium text-slate-800 mb-2">Addon Categories</h3>
-          <div className="flex flex-wrap gap-4 border border-slate-200 p-4 rounded-md bg-slate-50">
-            {addonCategories.map((addonCategory) => (
-              <label key={addonCategory.id} className="inline-flex items-center">
+            <hr style={{ borderColor: "var(--rf-line)" }} />
+
+            {/* Categories */}
+            <div>
+              <h3 className="text-sm font-medium mb-3" style={{ color: "var(--rf-ink)" }}>Addon Categories</h3>
+              <div className="flex flex-wrap gap-2 p-4 rounded-2xl border" style={{ borderColor: "var(--rf-line)", backgroundColor: "var(--rf-cream)" }}>
+                {addonCategories.map((addonCategory) => {
+                  const isChecked = select === addonCategory.id;
+                  return (
+                    <label key={addonCategory.id} className="relative flex items-center cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        name="addonCategoryId"
+                        value={addonCategory.id}
+                        defaultChecked={isChecked}
+                        className="peer sr-only"
+                      />
+                      <div className="px-4 py-2 rounded-xl text-sm font-medium transition-all border peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 border-slate-200 bg-white text-slate-600 group-hover:border-slate-400">
+                        {addonCategory.name}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Availability */}
+            <div className="flex items-center justify-between p-4 rounded-2xl border" style={{ borderColor: "var(--rf-line)" }}>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "var(--rf-ink)" }}>
+                  Available
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "rgba(27,31,59,0.45)" }}>
+                  Show this addon to customers
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  name="addonCategoryId"
-                  value={addonCategory.id}
-                  defaultChecked={select === addonCategory.id}
-                  className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                  name="isAvailable"
+                  defaultChecked={addons?.isAvailable ? true : false}
+                  className="sr-only peer"
                 />
-                <span className="ml-2 text-sm text-slate-700">{addonCategory.name}</span>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-900"></div>
               </label>
-            ))}
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="isAvailable"
-            name="isAvailable"
-            defaultChecked={addons?.isAvailable ? true : false}
-            className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-          />
-          <label htmlFor="isAvailable" className="ml-2 block text-sm font-medium text-slate-900">
-            isAvailable
-          </label>
-        </div>
-
-        <div className="pt-2">
-          <SubmitButton text="Update" />
-        </div>
-      </form>
+          {/* Footer Actions */}
+          <div className="px-6 md:px-8 py-5 border-t flex items-center justify-between gap-4" style={{ borderColor: "var(--rf-line)", backgroundColor: "rgba(0,0,0,0.02)" }}>
+            <button
+              formAction={DeleteAddon}
+              className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+              style={{ backgroundColor: "#FEE2E2", color: "#991B1B" }}
+            >
+              Delete
+            </button>
+            <input type="hidden" defaultValue={addons?.id} name="DeleteID" />
+            
+            <button
+              type="submit"
+              className="flex-1 max-w-[200px] px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 flex items-center justify-center gap-2"
+              style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
