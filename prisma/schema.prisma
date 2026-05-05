@@ -87,6 +87,7 @@ model Company {
   state          String?
   phoneNumber    Int?
   email          String?          @unique
+  vatRate        Float            @default(0.07)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   isArchived     Boolean          @default(false)
@@ -122,15 +123,17 @@ model Locations {
 }
 
 model Tables {
-  id             Int       @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   name           String
   locationId     Int
   qrCodeImageUrl String
-  createdAt      DateTime  @default(now())
-  isArchived     Boolean   @default(false)
-  updatedAt      DateTime  @updatedAt
+  status         TableStatus  @default(AVAILABLE)
+  createdAt      DateTime     @default(now())
+  isArchived     Boolean      @default(false)
+  updatedAt      DateTime     @updatedAt
   Orders         Orders[]
-  location       Locations @relation(fields: [locationId], references: [id])
+  Bills          Bills[]
+  location       Locations    @relation(fields: [locationId], references: [id])
 }
 
 model SelectedLocation {
@@ -171,6 +174,7 @@ model Orders {
   menuId       Int
   quantity     Int
   tableId      Int
+  price        Int            @default(0)
   status       ORDERSTATUS    @default(CART)
   isArchived   Boolean        @default(false)
   createdAt    DateTime       @default(now())
@@ -193,4 +197,24 @@ enum ORDERSTATUS {
   PENDING
   COOKING
   COMPLETE
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  BILL_REQUESTED
+}
+
+model Bills {
+  id         Int       @id @default(autoincrement())
+  tableId    Int
+  subtotal   Int
+  vatRate    Float     @default(0.07)
+  vatAmount  Float
+  total      Float
+  paidAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  isArchived Boolean   @default(false)
+  table      Tables    @relation(fields: [tableId], references: [id])
 }

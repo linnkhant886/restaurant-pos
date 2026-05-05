@@ -13,11 +13,13 @@ import {
   MapPin,
   Settings,
   LogOut,
+  BarChart3,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const OPERATIONS = [
   { id: 1, label: "Orders", icon: ShoppingBag, route: "/backoffice/orders" },
+  { id: 9, label: "Reports", icon: BarChart3, route: "/backoffice/reports" },
 ];
 
 const MANAGE = [

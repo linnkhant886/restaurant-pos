@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, ChevronDown, Check, Plus, Loader2, X } from "lucide-react";
+import { MapPin, ChevronDown, Check, Plus, Loader2, X, Pencil } from "lucide-react";
 import { Locations } from "@prisma/client";
-import { updateSelectedLocation, createLocation } from "@/app/backoffice/locations/actions";
+import { updateSelectedLocation, createLocation, UpdateLocation, DeleteLocation } from "@/app/backoffice/locations/actions";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -18,6 +18,12 @@ export function LocationSwitcher({ locations, selectedLocationId }: Props) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [newLocationName, setNewLocationName] = useState("");
   const [saving, setSaving] = useState(false);
+  
+  const [editingLocation, setEditingLocation] = useState<Locations | null>(null);
+  const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
+  const [editLocationName, setEditLocationName] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedLocation = locations.find((l) => l.id === selectedLocationId);
@@ -70,6 +76,55 @@ export function LocationSwitcher({ locations, selectedLocationId }: Props) {
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingLocation || !editLocationName.trim()) return;
+
+    setSaving(true);
+    try {
+      const fd = new FormData();
+      fd.set("id", String(editingLocation.id));
+      fd.set("locationName", editLocationName);
+      
+      const res = await UpdateLocation(fd);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Location updated");
+        setIsEditPanelOpen(false);
+        router.refresh();
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editingLocation) return;
+    if (!confirm("Are you sure you want to delete this location? It may contain tables and menus.")) return;
+
+    setDeleting(true);
+    try {
+      const fd = new FormData();
+      fd.set("DeleteID", String(editingLocation.id));
+      
+      const res = await DeleteLocation(fd);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Location deleted");
+        setIsEditPanelOpen(false);
+        router.refresh();
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <>
       <div className="relative" ref={dropdownRef}>
@@ -101,13 +156,27 @@ export function LocationSwitcher({ locations, selectedLocationId }: Props) {
                 <button
                   key={loc.id}
                   onClick={() => handleSelect(loc.id)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-black/5"
+                  className="w-full flex items-center px-4 py-2.5 text-sm transition-colors hover:bg-black/5 group"
                   style={{ color: "var(--rf-ink)" }}
                 >
-                  <span className={loc.id === selectedLocationId ? "font-semibold" : "font-medium"}>
+                  <span className={`flex-1 text-left ${loc.id === selectedLocationId ? "font-semibold" : "font-medium"}`}>
                     {loc.name}
                   </span>
-                  {loc.id === selectedLocationId && <Check className="w-4 h-4 text-emerald-600" />}
+                  <div className="flex items-center gap-2">
+                    {loc.id === selectedLocationId && <Check className="w-4 h-4 text-emerald-600" />}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingLocation(loc);
+                        setEditLocationName(loc.name);
+                        setIsEditPanelOpen(true);
+                        setIsOpen(false);
+                      }}
+                      className="p-1.5 rounded-md hover:bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Pencil className="w-3.5 h-3.5" style={{ color: "var(--rf-ink)" }} />
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -180,6 +249,70 @@ export function LocationSwitcher({ locations, selectedLocationId }: Props) {
               style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
             >
               {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Save Location"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Slide-over panel for editing location */}
+      <div
+        className="fixed inset-0 z-[100] transition-opacity duration-300"
+        style={{
+          backgroundColor: "rgba(27,31,59,0.25)",
+          opacity: isEditPanelOpen ? 1 : 0,
+          pointerEvents: isEditPanelOpen ? "auto" : "none",
+        }}
+        onClick={() => setIsEditPanelOpen(false)}
+      />
+
+      <div
+        className="fixed top-0 right-0 h-full z-[110] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
+        style={{
+          width: 420,
+          backgroundColor: "var(--rf-paper)",
+          transform: isEditPanelOpen ? "translateX(0)" : "translateX(100%)",
+        }}
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--rf-line)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "rgba(27,31,59,0.4)" }}>
+            Edit Location
+          </p>
+          <button onClick={() => setIsEditPanelOpen(false)} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-black/6 transition-colors">
+            <X className="h-4 w-4" style={{ color: "rgba(27,31,59,0.45)" }} />
+          </button>
+        </div>
+
+        <form onSubmit={handleUpdate} className="flex flex-col flex-1 pb-6">
+          <div className="px-6 py-6 space-y-6 flex-1">
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--rf-ink)" }}>Location Name</label>
+              <input 
+                type="text" 
+                value={editLocationName} 
+                onChange={e => setEditLocationName(e.target.value)} 
+                required 
+                className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all focus:border-[#1b1f3b]"
+                style={{ borderColor: "var(--rf-line)", backgroundColor: "var(--rf-cream)", color: "var(--rf-ink)" }}
+              />
+            </div>
+          </div>
+
+          <div className="px-6 py-5 border-t flex gap-3" style={{ borderColor: "var(--rf-line)" }}>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: "var(--rf-ink)", color: "var(--rf-yellow)" }}
+            >
+              {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Save Changes"}
             </button>
           </div>
         </form>

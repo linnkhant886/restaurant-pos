@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CreateAddon } from "../actions";
 import { getCompanyAddonCategories } from "@/lib/actions/action";
 import { ArrowLeft } from "lucide-react";

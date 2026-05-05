@@ -9,9 +9,12 @@ import {
   ChevronRight, 
   Archive, 
   ShoppingBag,
-  Utensils
+  Utensils,
+  Receipt,
+  X,
+  CreditCard
 } from "lucide-react";
-import { updateOrderStatus, archiveOrder } from "./action";
+import { updateOrderStatus, archiveOrder, generateBill, markAsPaid } from "./action";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -75,6 +78,8 @@ export default function OrderManagement({ initialOrders }: Props) {
   const router = useRouter();
   const [filter, setFilter] = useState<string>("ALL");
   const [isPending, startTransition] = useTransition();
+  const [showBillModal, setShowBillModal] = useState<any>(null);
+  const [isBilling, setIsBilling] = useState(false);
 
   // Group orders by table
   const groupedByTable = useMemo(() => {
@@ -145,6 +150,32 @@ export default function OrderManagement({ initialOrders }: Props) {
       }
       router.refresh();
     });
+  };
+
+  const handleGenerateBill = async (tableId: number) => {
+    setIsBilling(true);
+    try {
+      const res = await generateBill(tableId);
+      if (res?.success) {
+        setShowBillModal(res.bill);
+      }
+    } finally {
+      setIsBilling(false);
+    }
+  };
+
+  const handleMarkAsPaid = async (billId: number, tableId: number) => {
+    setIsBilling(true);
+    try {
+      await markAsPaid(billId);
+      setShowBillModal(null);
+      if (selectedTableId === tableId) {
+        setSelectedTableId(null);
+      }
+      router.refresh();
+    } finally {
+      setIsBilling(false);
+    }
   };
 
   return (
@@ -307,11 +338,12 @@ export default function OrderManagement({ initialOrders }: Props) {
 
                  {pendingOrders.length === 0 && cookingOrders.length === 0 && doneOrders.length > 0 && (
                     <button 
-                      onClick={() => handleTableArchive(doneOrders)}
-                      className="flex items-center gap-2 px-6 py-2 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 shadow-lg transition-all active:scale-95"
+                      onClick={() => handleGenerateBill(selectedGroup.tableId)}
+                      disabled={isBilling}
+                      className="flex items-center gap-2 px-6 py-2 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 shadow-lg transition-all active:scale-95 disabled:opacity-50"
                     >
-                      <Archive className="w-4 h-4" />
-                      Archive Table Orders
+                      <Receipt className="w-4 h-4" />
+                      {isBilling ? "Generating..." : "Generate Bill"}
                     </button>
                  )}
               </div>
@@ -466,6 +498,52 @@ export default function OrderManagement({ initialOrders }: Props) {
           </div>
         )}
       </div>
+
+      {/* Bill Modal */}
+      {showBillModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-slate-400" />
+                Bill Summary
+              </h3>
+              <button 
+                onClick={() => setShowBillModal(null)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500 font-medium">Subtotal</span>
+                <span className="font-bold text-slate-900">${(showBillModal.subtotal).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500 font-medium">VAT ({Math.round(showBillModal.vatRate * 100)}%)</span>
+                <span className="font-bold text-slate-900">${(showBillModal.vatAmount).toFixed(2)}</span>
+              </div>
+              <div className="pt-4 border-t border-dashed border-slate-200 flex justify-between items-center">
+                <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total</span>
+                <span className="text-3xl font-black text-slate-900">${(showBillModal.total).toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="p-6 pt-0">
+              <button
+                onClick={() => handleMarkAsPaid(showBillModal.id, showBillModal.tableId)}
+                disabled={isBilling}
+                className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+              >
+                <CreditCard className="w-5 h-5" />
+                {isBilling ? "Processing..." : "Mark as Paid"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

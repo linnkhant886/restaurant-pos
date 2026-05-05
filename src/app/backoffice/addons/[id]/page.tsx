@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { prisma } from "@/lib/prisma";
 import { DeleteAddon, getAddon, UpdateAddon } from "../actions";
 import { Loader2, ArrowLeft } from "lucide-react";

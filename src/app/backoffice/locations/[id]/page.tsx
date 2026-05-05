@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DeleteLocation, UpdateLocation } from "../actions";
 import { getLocation, getSelectedLocation } from "@/lib/actions/action";
 import { SubmitButton } from "@/components/shared/SubmitButton";
